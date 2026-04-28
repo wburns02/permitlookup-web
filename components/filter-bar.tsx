@@ -78,8 +78,12 @@ export function filtersFromUrl(
 type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
 
 function defaultFromDate(): string {
+  // 30-day default keeps the cold-cache list query under Cloudflare's
+  // gateway timeout. Wider ranges work fine once the user filters by
+  // county/zip. Will widen to 365d after the hail_leads MV gets
+  // storm_date + (county, storm_date) indexes (scheduled 3am cleanup).
   const d = new Date();
-  d.setDate(d.getDate() - 365);
+  d.setDate(d.getDate() - 30);
   return d.toISOString().slice(0, 10);
 }
 
