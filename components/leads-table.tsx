@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Inbox,
@@ -22,7 +21,12 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { getHailLeadsList } from "@/lib/api";
+import {
+  getHailLeadsList,
+  getHailLeadsListWithCache,
+  hasUserFilters,
+} from "@/lib/api";
+import type { CachedHailLeadListResponse } from "@/lib/cache";
 import type {
   HailLeadListItem,
   HailLeadListResponse,
@@ -85,18 +89,41 @@ function CategoryBadge({ value }: { value: string | null }) {
 // State management
 // ---------------------------------------------------------------------------
 
+type Source = "cache" | "live" | "cache-after-error";
+
 type State =
   | { status: "loading" }
-  | { status: "ok"; data: HailLeadListResponse }
-  | { status: "error"; message: string };
+  | {
+      status: "ok";
+      data: HailLeadListResponse | CachedHailLeadListResponse;
+      source: Source;
+    }
+  | {
+      status: "loading-with-prev";
+      prev: HailLeadListResponse | CachedHailLeadListResponse;
+      prevSource: Source;
+    };
 
 type Props = {
   filters: HailLeadsFilters;
+  /**
+   * Notifies the parent when our data source changes so the page can
+   * sync the cache banner (info vs warning) and the "as of" pill.
+   *
+   * - "cache": default unfiltered render came from the static snapshot.
+   * - "live": the live API responded successfully for the active filters.
+   * - "cache-after-error": live API failed; we reverted to the cache.
+   */
+  onSourceChange?: (info: {
+    source: Source;
+    generatedAt?: string | null;
+  }) => void;
 };
 
-export function LeadsTable({ filters }: Props) {
+export function LeadsTable({ filters, onSourceChange }: Props) {
   const [state, setState] = useState<State>({ status: "loading" });
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const sourceRef = useRef<Source | null>(null);
 
   const effectiveFilters: HailLeadsFilters = {
     ...filters,
@@ -107,50 +134,86 @@ export function LeadsTable({ filters }: Props) {
 
   // Serialize filters to a stable key for the effect dep.
   const filtersKey = JSON.stringify(effectiveFilters);
+  const userFilterActive = hasUserFilters(effectiveFilters);
 
   useEffect(() => {
-    setState({ status: "loading" });
     let cancelled = false;
+
+    // Preserve current rows during refetch (dimmed) — this is the "keep
+    // cached rows visible while live request is in flight" behavior.
+    setState((prev) => {
+      if (prev.status === "ok") {
+        return {
+          status: "loading-with-prev",
+          prev: prev.data,
+          prevSource: prev.source,
+        };
+      }
+      return prev.status === "loading-with-prev" ? prev : { status: "loading" };
+    });
+
+    function announce(source: Source, generatedAt?: string | null) {
+      if (sourceRef.current !== source) {
+        sourceRef.current = source;
+        onSourceChange?.({ source, generatedAt: generatedAt ?? null });
+      } else if (source === "cache" || source === "cache-after-error") {
+        // Re-emit so the parent always has the freshest generated_at.
+        onSourceChange?.({ source, generatedAt: generatedAt ?? null });
+      }
+    }
+
+    if (!userFilterActive) {
+      // Default path — pull the static cache. No live API call.
+      getHailLeadsListWithCache(effectiveFilters)
+        .then((data) => {
+          if (cancelled) return;
+          setState({ status: "ok", data, source: "cache" });
+          announce("cache", data.generated_at ?? null);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          // Cache module already returns FALLBACK constants on failure,
+          // so this branch should be unreachable; keep it defensive.
+          setState({ status: "loading" });
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    // User has filters → hit the live API. On error, fall back to cache
+    // and flip the banner to its warning state.
     getHailLeadsList(effectiveFilters)
       .then((data) => {
-        if (!cancelled) setState({ status: "ok", data });
+        if (cancelled) return;
+        setState({ status: "ok", data, source: "live" });
+        announce("live");
       })
-      .catch((err: Error) => {
-        if (!cancelled)
-          setState({
-            status: "error",
-            message: err.message || "Failed to load leads",
-          });
+      .catch(async () => {
+        if (cancelled) return;
+        // Quietly fall back to the cached snapshot. We don't surface a
+        // toast — the parent banner says it instead.
+        const cached = await getHailLeadsListWithCache(effectiveFilters, {
+          forceCache: true,
+        });
+        if (cancelled) return;
+        setState({ status: "ok", data: cached, source: "cache-after-error" });
+        announce("cache-after-error", cached.generated_at ?? null);
       });
+
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey]);
 
+  // First-paint loading: no previous rows to show — render skeleton.
   if (state.status === "loading") {
     return <TableSkeleton />;
   }
 
-  if (state.status === "error") {
-    return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-8 text-amber-900">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div className="flex-1">
-            <div className="font-semibold">Couldn&apos;t load leads</div>
-            <div className="mt-1 text-sm">{state.message}</div>
-            <div className="mt-3 text-xs text-amber-800">
-              The API returned an error. Try clearing filters, or check back in
-              a minute — we may be refreshing the materialized view.
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const { data } = state;
+  const isRefetching = state.status === "loading-with-prev";
+  const data = state.status === "ok" ? state.data : state.prev;
 
   if (data.results.length === 0) {
     return (
@@ -170,7 +233,13 @@ export function LeadsTable({ filters }: Props) {
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div
+        className={cn(
+          "overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-opacity duration-200",
+          isRefetching && "opacity-50",
+        )}
+        aria-busy={isRefetching || undefined}
+      >
         {/* Desktop table */}
         <div className="hidden md:block">
           <Table>
@@ -346,7 +415,7 @@ function Pagination({
   data,
   filters,
 }: {
-  data: HailLeadListResponse;
+  data: HailLeadListResponse | CachedHailLeadListResponse;
   filters: HailLeadsFilters;
 }) {
   const router = useRouter();

@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, Cloud, CloudRain, Home, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { getHailLeadsStats } from "@/lib/api";
-import type { HailLeadsStats } from "@/lib/types";
+import { getHailLeadsStatsCached } from "@/lib/api";
+import type { CachedHailLeadsStats } from "@/lib/cache";
+import { formatGeneratedAt } from "./cache-banner";
 
 type State =
   | { status: "loading" }
-  | { status: "ok"; data: HailLeadsStats }
+  | { status: "ok"; data: CachedHailLeadsStats }
   | { status: "error"; message: string };
 
 function formatBigNumber(n: number): string {
@@ -55,11 +56,14 @@ function formatRelativeDays(iso: string | null): {
 }
 
 export function KpiCards() {
+  // Default fetch path is the static cache. The cache module returns
+  // FALLBACK constants if the network is unreachable, so this should
+  // virtually never end up in the "error" state.
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
     let cancelled = false;
-    getHailLeadsStats()
+    getHailLeadsStatsCached()
       .then((data) => {
         if (!cancelled) setState({ status: "ok", data });
       })
@@ -171,5 +175,18 @@ export function KpiCards() {
         </div>
       ))}
     </div>
+  );
+}
+
+/**
+ * Compact "As of <time>" pill. Used in the dashboard header to advertise
+ * the freshness of whatever data we're currently showing.
+ */
+export function AsOfPill({ generatedAt }: { generatedAt: string | null | undefined }) {
+  if (!generatedAt) return null;
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
+      As of {formatGeneratedAt(generatedAt)}
+    </span>
   );
 }

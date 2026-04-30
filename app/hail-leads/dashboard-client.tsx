@@ -1,28 +1,85 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CloudLightning, Sparkles } from "lucide-react";
-import { KpiCards } from "@/components/kpi-cards";
+import { AsOfPill, KpiCards } from "@/components/kpi-cards";
+import { CacheBanner, type CacheBannerState } from "@/components/cache-banner";
 import { FilterBar, filtersFromUrl } from "@/components/filter-bar";
 import { LeadsTable } from "@/components/leads-table";
+import { getHailLeadsStatsCached } from "@/lib/api";
 
 /**
  * Full hail-leads dashboard. Rendered inside HailLeadsGate, so by the time
  * this component mounts the demo password has already been accepted.
+ *
+ * Default render reads from the R730 static JSON cache (Tailscale Funnel,
+ * refreshed hourly). The live Railway API is only consulted once the user
+ * applies a filter; if that fails we fall back to the cache and flip the
+ * banner to its warning state.
  */
 export function HailLeadsDashboard() {
   const sp = useSearchParams();
   const filters = filtersFromUrl(sp);
+
+  const [bannerState, setBannerState] = useState<CacheBannerState>("info");
+  const [generatedAt, setGeneratedAt] = useState<string | null>(null);
+
+  // Pull stats once at mount so the "as of" pill in the header has a
+  // generated_at to display alongside the KPI cards (which fetch the
+  // same URL — the browser HTTP cache de-dupes).
+  useEffect(() => {
+    let cancelled = false;
+    getHailLeadsStatsCached()
+      .then((data) => {
+        if (!cancelled && data.generated_at) {
+          setGeneratedAt(data.generated_at);
+        }
+      })
+      .catch(() => {
+        /* silent — banner stays in info state, pill stays empty */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleSourceChange = useCallback(
+    ({
+      source,
+      generatedAt: leadsGeneratedAt,
+    }: {
+      source: "cache" | "live" | "cache-after-error";
+      generatedAt?: string | null;
+    }) => {
+      if (source === "live") {
+        setBannerState("hidden");
+        return;
+      }
+      if (source === "cache-after-error") {
+        setBannerState("warning");
+      } else {
+        setBannerState("info");
+      }
+      // Prefer the leads-snapshot generated_at if we have one — it's the
+      // payload the user is actually looking at.
+      if (leadsGeneratedAt) setGeneratedAt(leadsGeneratedAt);
+    },
+    [],
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
       {/* Header */}
       <header className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-indigo-700">
-            <CloudLightning className="h-3.5 w-3.5" />
-            Live demo
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-indigo-700">
+              <CloudLightning className="h-3.5 w-3.5" />
+              Live demo
+            </span>
+            <AsOfPill generatedAt={generatedAt} />
+          </div>
           <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
             Hail Leads{" "}
             <span className="text-slate-400">·</span>{" "}
@@ -41,6 +98,9 @@ export function HailLeadsDashboard() {
         </div>
       </header>
 
+      {/* Cache state banner */}
+      <CacheBanner state={bannerState} generatedAt={generatedAt} />
+
       {/* KPIs */}
       <section className="mb-8">
         <KpiCards />
@@ -50,7 +110,7 @@ export function HailLeadsDashboard() {
       <FilterBar initial={filters} />
 
       {/* Table */}
-      <LeadsTable filters={filters} />
+      <LeadsTable filters={filters} onSourceChange={handleSourceChange} />
     </div>
   );
 }

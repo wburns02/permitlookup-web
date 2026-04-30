@@ -15,6 +15,12 @@ import type {
   HailLeadsFilters,
   HailLeadsStats,
 } from "./types";
+import {
+  getCachedDefaultLeads,
+  getCachedStats,
+  type CachedHailLeadListResponse,
+  type CachedHailLeadsStats,
+} from "./cache";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
@@ -106,8 +112,26 @@ export function filtersToSearchParams(
 // Endpoints
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Cache-aware mode
+//
+// When `useCacheIfAvailable` is true (and, for the list, no real filters
+// have been set), we read the precomputed JSON snapshot R730 publishes
+// hourly instead of hitting Railway. The cache module returns hardcoded
+// FALLBACK constants if the cache itself is unreachable, so these
+// `getHailLeads*WithCache` calls effectively never throw on the default
+// path. Callers who *do* want the live API (filter applied, retry, etc.)
+// continue using `getHailLeadsStats` / `getHailLeadsList`.
+// ---------------------------------------------------------------------------
+
 export function getHailLeadsStats(init?: FetchInit): Promise<HailLeadsStats> {
   return request<HailLeadsStats>("/v1/hail-leads/stats", init);
+}
+
+export function getHailLeadsStatsCached(
+  signal?: AbortSignal,
+): Promise<CachedHailLeadsStats> {
+  return getCachedStats(signal);
 }
 
 export function getHailLeadsList(
@@ -117,6 +141,41 @@ export function getHailLeadsList(
   const qs = filtersToSearchParams(filters).toString();
   const path = `/v1/hail-leads/${qs ? `?${qs}` : ""}`;
   return request<HailLeadListResponse>(path, init);
+}
+
+/**
+ * True when no user-controllable filter has been set. Pagination + sort
+ * are not "filters" for the purposes of cache-vs-live routing — the cache
+ * snapshot is already sorted by score and the user clicking "next page"
+ * shouldn't trigger an API roundtrip on the default unfiltered view.
+ */
+export function hasUserFilters(filters: HailLeadsFilters): boolean {
+  return Boolean(
+    filters.county ||
+      filters.from_date ||
+      filters.to_date ||
+      filters.category ||
+      filters.min_hail_inches !== undefined ||
+      filters.min_days_after !== undefined ||
+      filters.max_days_after !== undefined,
+  );
+}
+
+/**
+ * Cache-aware list fetch. If `forceCache` is true, OR no user filters
+ * are set, return the cached default snapshot. Otherwise hit the live API.
+ * Errors from the live API propagate so the caller can fall back to cache.
+ */
+export async function getHailLeadsListWithCache(
+  filters: HailLeadsFilters,
+  options: { forceCache?: boolean; signal?: AbortSignal } = {},
+): Promise<CachedHailLeadListResponse> {
+  const { forceCache = false, signal } = options;
+  if (forceCache || !hasUserFilters(filters)) {
+    return getCachedDefaultLeads(signal);
+  }
+  const live = await getHailLeadsList(filters, { signal });
+  return live;
 }
 
 export function getHailLeadDetail(
