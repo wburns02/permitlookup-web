@@ -11,7 +11,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | `NEXT_PUBLIC_API_BASE` | `https://permit-api-production-6eae.up.railway.app` | Live hail-leads API (Railway). Only hit after the user applies a filter — the default dashboard render reads from the static cache below. |
 | `NEXT_PUBLIC_DEMO_API_KEY` | `pl_demo_…` | `X-API-Key` header for the live API. |
 | `NEXT_PUBLIC_DEMO_PASSWORD` | `#Espn2025` | Client-side gate password (`HailLeadsGate`). |
-| `NEXT_PUBLIC_DASHBOARD_CACHE_BASE` | `https://soc-api.tailad2d5f.ts.net/dashboard-cache` | Static JSON snapshot served by R730 over Tailscale Funnel. Refreshed hourly by cron; serves CORS `*` and `Cache-Control: public, max-age=300`. Endpoints: `/stats.json`, `/default_leads.json`. |
+| `NEXT_PUBLIC_DASHBOARD_CACHE_BASE` | `/api/dashboard-cache` | **Client-side** path used by the browser to fetch the cache. Defaults to a same-origin Next route handler (`app/api/dashboard-cache/[file]/route.ts`) that proxies to `DASHBOARD_CACHE_UPSTREAM` server-side. We must proxy because Chrome's Private Network Access blocks public origins from fetching `*.ts.net` directly. |
+| `DASHBOARD_CACHE_UPSTREAM` | `https://soc-api.tailad2d5f.ts.net/dashboard-cache` | **Server-only** upstream URL (no `NEXT_PUBLIC_` prefix). Used by the route proxy and during SSR (`lib/stats.ts`). R730 publishes hourly JSON snapshots over Tailscale Funnel here; serves CORS `*` and `Cache-Control: public, max-age=300`. Endpoints: `/stats.json`, `/default_leads.json`. |
 
 ## Dashboard data flow (Stage 2)
 

@@ -2,17 +2,23 @@
  * Static dashboard cache fetcher.
  *
  * R730 publishes hourly JSON snapshots over Tailscale Funnel:
- *   <base>/stats.json          → HailLeadsStats + generated_at
- *   <base>/default_leads.json  → HailLeadListResponse + generated_at
+ *   <upstream>/stats.json          → HailLeadsStats + generated_at
+ *   <upstream>/default_leads.json  → HailLeadListResponse + generated_at
  *
- * This is the *primary* data source on first paint. We only fall through
- * to the live Railway API when the user changes filters. If the cache
- * itself is unreachable, we fall back to hardcoded constants so the
- * dashboard never renders blank.
+ * The browser cannot reach `*.ts.net` directly from a public-internet
+ * origin — Chrome's Private Network Access policy blocks the request
+ * even though CORS headers are set. So we route through a same-origin
+ * Vercel route handler at `/api/dashboard-cache/<file>` which fetches
+ * the upstream server-side.
  *
- * Both cache endpoints serve `Access-Control-Allow-Origin: *` and a
- * 5-minute Cache-Control, so the browser will reuse the response across
- * navigations within the same tab session.
+ * This is the *primary* data source on first paint. We only fall
+ * through to the live Railway API when the user changes filters. If the
+ * cache itself is unreachable we fall back to hardcoded constants so
+ * the dashboard never renders blank.
+ *
+ * `NEXT_PUBLIC_DASHBOARD_CACHE_BASE` defaults to the same-origin proxy.
+ * Override only if you have a reason to bypass it (e.g. local dev with
+ * `LAN-direct` Tailscale access, or a CDN edge in front of the cron).
  */
 
 import type {
@@ -21,9 +27,29 @@ import type {
   HailLeadsStats,
 } from "./types";
 
-const CACHE_BASE =
-  process.env.NEXT_PUBLIC_DASHBOARD_CACHE_BASE ??
+// On the client we hit the same-origin Next route handler so we don't run
+// into Chrome's Private Network Access blocker (Tailscale Funnel resolves
+// to a private/local IP). On the server (Vercel function) we call the
+// upstream directly — no PNA boundary.
+const UPSTREAM_BASE =
+  process.env.DASHBOARD_CACHE_UPSTREAM ??
+  process.env.NEXT_PUBLIC_DASHBOARD_CACHE_UPSTREAM ??
   "https://soc-api.tailad2d5f.ts.net/dashboard-cache";
+
+const CLIENT_BASE =
+  process.env.NEXT_PUBLIC_DASHBOARD_CACHE_BASE ?? "/api/dashboard-cache";
+
+const IS_SERVER = typeof window === "undefined";
+
+// File extension policy: same-origin proxy paths use `/stats` (no ext),
+// direct upstream paths use `/stats.json`.
+function fileUrl(name: "stats" | "default_leads"): string {
+  if (IS_SERVER) return `${UPSTREAM_BASE}/${name}.json`;
+  const base = CLIENT_BASE;
+  return /^https?:\/\//i.test(base)
+    ? `${base}/${name}.json`
+    : `${base}/${name}`;
+}
 
 export type CachedHailLeadsStats = HailLeadsStats & { generated_at?: string };
 export type CachedHailLeadListResponse = HailLeadListResponse & {
@@ -107,7 +133,7 @@ export async function getCachedStats(
 ): Promise<CachedHailLeadsStats> {
   try {
     const raw = await fetchJson<Record<string, unknown>>(
-      `${CACHE_BASE}/stats.json`,
+      fileUrl("stats"),
       signal,
     );
     return {
@@ -139,7 +165,7 @@ export async function getCachedDefaultLeads(
 ): Promise<CachedHailLeadListResponse> {
   try {
     const raw = await fetchJson<Record<string, unknown>>(
-      `${CACHE_BASE}/default_leads.json`,
+      fileUrl("default_leads"),
       signal,
     );
     const rawResults = Array.isArray(raw.results)
