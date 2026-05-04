@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Lock, ArrowRight } from "lucide-react";
+import { trackEvent } from "@/lib/track";
 
 const STORAGE_KEY = "pl_demo_unlocked";
 
@@ -37,6 +38,18 @@ export function HailLeadsGate({ children }: { children: React.ReactNode }) {
         window.localStorage.setItem(STORAGE_KEY, "1");
       } catch {
         /* ignore storage failures */
+      }
+      // Fire gate_unlock only on dumpster routes — track.ts gates it too,
+      // but we double-check here so this is explicit at the call site.
+      try {
+        if (
+          typeof window !== "undefined" &&
+          window.location.pathname.startsWith("/dumpster")
+        ) {
+          trackEvent("gate_unlock");
+        }
+      } catch {
+        /* ignore */
       }
       setUnlocked(true);
     } else {

@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, ChevronRight, Inbox, Phone } from "lucide-react";
+import { trackEvent } from "@/lib/track";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -151,6 +152,16 @@ type Props = {
 };
 
 export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
+  const handleSelect = (r: DumpsterLead) => {
+    trackEvent("lead_click", {
+      lead_id: r.lead_id,
+      grade: r.lead_grade ?? null,
+      score: r.lead_score ?? null,
+      source: r.source ?? null,
+    });
+    onSelect(r);
+  };
+
   if (loading) return <TableSkeleton />;
 
   if (leads.length === 0) {
@@ -192,7 +203,7 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
               <DesktopRow
                 key={r.lead_id}
                 row={r}
-                onClick={() => onSelect(r)}
+                onClick={() => handleSelect(r)}
               />
             ))}
           </TableBody>
@@ -205,7 +216,7 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
           <li key={r.lead_id}>
             <button
               type="button"
-              onClick={() => onSelect(r)}
+              onClick={() => handleSelect(r)}
               className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50"
             >
               <div className="min-w-0 flex-1">
@@ -236,7 +247,14 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
                   {r.contractor_phone && (
                     <a
                       href={`tel:${r.contractor_phone.replace(/\D/g, "")}`}
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        trackEvent("phone_tap", {
+                          lead_id: r.lead_id,
+                          contractor_company: r.contractor_company ?? null,
+                          where: "table_mobile",
+                        });
+                      }}
                       className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700"
                     >
                       <Phone className="h-3 w-3" />
@@ -333,7 +351,14 @@ function DesktopRow({
         {row.contractor_phone && (
           <a
             href={`tel:${row.contractor_phone.replace(/\D/g, "")}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              trackEvent("phone_tap", {
+                lead_id: row.lead_id,
+                contractor_company: row.contractor_company ?? null,
+                where: "table_desktop",
+              });
+            }}
             className="mt-0.5 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-500"
           >
             <Phone className="h-3 w-3" />

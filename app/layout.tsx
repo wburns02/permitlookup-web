@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { SiteHeader, type SiteHeaderVariant } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -35,6 +37,8 @@ export default async function RootLayout({
         <SiteHeader variant={variant} />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

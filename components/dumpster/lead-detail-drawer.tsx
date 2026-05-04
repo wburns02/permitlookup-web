@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   BadgeCheck,
   Calendar,
@@ -10,6 +11,7 @@ import {
   Phone,
   User,
 } from "lucide-react";
+import { trackEvent } from "@/lib/track";
 import {
   Sheet,
   SheetContent,
@@ -87,6 +89,11 @@ export function DumpsterLeadDrawer({ lead, onClose }: Props) {
 function DrawerBody({ lead }: { lead: DumpsterLead }) {
   const cityLine = [lead.city, lead.zip].filter(Boolean).join(", ");
   const maps = mapsUrl(lead);
+
+  // Fire drawer_open whenever a different lead is shown.
+  useEffect(() => {
+    trackEvent("drawer_open", { lead_id: lead.lead_id });
+  }, [lead.lead_id]);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -266,12 +273,24 @@ function ContractorSection({ lead }: { lead: DumpsterLead }) {
             <div className="flex flex-wrap items-center gap-2">
               <a
                 href={`tel:${phoneDigits}`}
+                onClick={() =>
+                  trackEvent("phone_tap", {
+                    lead_id: lead.lead_id,
+                    where: "drawer",
+                  })
+                }
                 className="text-base font-semibold text-indigo-700 hover:text-indigo-600"
               >
                 {formatPhone(lead.contractor_phone)}
               </a>
               <a
                 href={`tel:${phoneDigits}`}
+                onClick={() =>
+                  trackEvent("phone_tap", {
+                    lead_id: lead.lead_id,
+                    where: "drawer",
+                  })
+                }
                 className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500"
               >
                 <Phone className="h-3.5 w-3.5" />
@@ -286,12 +305,18 @@ function ContractorSection({ lead }: { lead: DumpsterLead }) {
             <div className="flex flex-wrap items-center gap-2">
               <a
                 href={`mailto:${lead.contractor_email}`}
+                onClick={() =>
+                  trackEvent("email_tap", { lead_id: lead.lead_id })
+                }
                 className="break-all text-sm font-medium text-indigo-700 hover:text-indigo-600"
               >
                 {lead.contractor_email}
               </a>
               <a
                 href={`mailto:${lead.contractor_email}`}
+                onClick={() =>
+                  trackEvent("email_tap", { lead_id: lead.lead_id })
+                }
                 className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
                 <Mail className="h-3.5 w-3.5" />

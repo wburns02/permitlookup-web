@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MapPin, Sparkles } from "lucide-react";
 import { CacheBanner } from "@/components/cache-banner";
+import { startSessionTracking, trackEvent } from "@/lib/track";
 import { DumpsterAsOfPill, DumpsterKpiCards } from "@/components/dumpster/kpi-cards";
 import {
   DumpsterFilterBar,
@@ -34,6 +35,11 @@ export function DumpsterLeadsDashboard() {
   );
   const [selected, setSelected] = useState<DumpsterLead | null>(null);
 
+  // Wire up auto page_view + heartbeat tracking.
+  useEffect(() => {
+    startSessionTracking();
+  }, []);
+
   // Fetch cache on mount.
   useEffect(() => {
     let cancelled = false;
@@ -60,8 +66,40 @@ export function DumpsterLeadsDashboard() {
     return applyFilters(leads, filters);
   }, [leads, filters]);
 
+  const handleApplyFilters = useCallback(
+    (next: DumpsterFilters) => {
+      // Detect a pure sort-only change vs a full filter apply.
+      const sortChanged = next.sort !== filters.sort;
+      const otherChanged =
+        (next.cityZip ?? "") !== (filters.cityZip ?? "") ||
+        JSON.stringify(next.categories ?? []) !==
+          JSON.stringify(filters.categories ?? []) ||
+        (next.fromDate ?? "") !== (filters.fromDate ?? "") ||
+        (next.toDate ?? "") !== (filters.toDate ?? "") ||
+        (next.minDaysSinceIssue ?? 0) !== (filters.minDaysSinceIssue ?? 0);
+
+      // Compute the row count this apply will surface.
+      const resultCount = leads ? applyFilters(leads, next).length : 0;
+
+      if (sortChanged && !otherChanged) {
+        trackEvent("sort_change", { sort_key: next.sort });
+      } else {
+        trackEvent("filter_apply", {
+          filters: next,
+          result_count: resultCount,
+        });
+      }
+      setFilters(next);
+    },
+    [filters, leads],
+  );
+
   const exportCsv = useCallback(() => {
     const rows = filteredLeads;
+    trackEvent("csv_export", {
+      row_count: rows.length,
+      filters,
+    });
     const headers = [
       "lead_id",
       "lead_grade",
@@ -100,7 +138,7 @@ export function DumpsterLeadsDashboard() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-  }, [filteredLeads]);
+  }, [filteredLeads, filters]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
@@ -145,7 +183,7 @@ export function DumpsterLeadsDashboard() {
       {/* Filters */}
       <DumpsterFilterBar
         initial={filters}
-        onApply={setFilters}
+        onApply={handleApplyFilters}
         onExportCsv={exportCsv}
       />
 
