@@ -57,6 +57,10 @@ export type DumpsterLead = {
   valuation: number | null;
   contractor_company: string | null;
   contractor_phone: string | null;
+  contractor_email: string | null;
+  contractor_license_number: string | null;
+  contractor_license_status: string | null;
+  contractor_license_expires: string | null;
   owner_name: string | null;
   category: DumpsterCategory | string;
   source: string;

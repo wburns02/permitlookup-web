@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Inbox, Phone } from "lucide-react";
+import { BadgeCheck, ChevronRight, Inbox, Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -177,16 +177,30 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
                     {r.description}
                   </div>
                 )}
-                {r.contractor_phone && (
-                  <a
-                    href={`tel:${r.contractor_phone.replace(/\D/g, "")}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="mt-2 inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700"
-                  >
-                    <Phone className="h-3 w-3" />
-                    {formatPhone(r.contractor_phone)}
-                  </a>
+                {r.contractor_company && (
+                  <div className="mt-1.5 truncate text-xs font-medium text-slate-700">
+                    {r.contractor_company}
+                  </div>
                 )}
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {r.contractor_phone && (
+                    <a
+                      href={`tel:${r.contractor_phone.replace(/\D/g, "")}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {formatPhone(r.contractor_phone)}
+                    </a>
+                  )}
+                  {r.contractor_license_status === "Active" &&
+                    r.contractor_license_number && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                        <BadgeCheck className="h-3 w-3" />
+                        Licensed {r.contractor_license_number}
+                      </span>
+                    )}
+                </div>
               </div>
               <div className="flex shrink-0 items-center gap-1 pt-1 text-xs font-medium text-indigo-600">
                 View <ChevronRight className="h-3 w-3" />
@@ -257,19 +271,28 @@ function DesktopRow({
         })()}
       </TableCell>
       <TableCell>
-        <div className="max-w-[180px] truncate text-xs text-slate-700">
+        <div className="max-w-[200px] truncate text-xs font-medium text-slate-700">
           {row.contractor_company ?? "—"}
         </div>
         {row.contractor_phone && (
           <a
             href={`tel:${row.contractor_phone.replace(/\D/g, "")}`}
             onClick={(e) => e.stopPropagation()}
-            className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 hover:text-indigo-500"
+            className="mt-0.5 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-500"
           >
             <Phone className="h-3 w-3" />
             {formatPhone(row.contractor_phone)}
           </a>
         )}
+        {row.contractor_license_status === "Active" &&
+          row.contractor_license_number && (
+            <div className="mt-1">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                <BadgeCheck className="h-3 w-3" />
+                Licensed {row.contractor_license_number}
+              </span>
+            </div>
+          )}
       </TableCell>
       <TableCell className="pr-5">
         <span className="text-[11px] text-slate-500">{row.source || "—"}</span>

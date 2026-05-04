@@ -99,6 +99,13 @@ function coerceLead(raw: Record<string, unknown>): DumpsterLead {
     valuation: toNumberOrNull(raw.valuation),
     contractor_company: (raw.contractor_company as string | null) ?? null,
     contractor_phone: (raw.contractor_phone as string | null) ?? null,
+    contractor_email: (raw.contractor_email as string | null) ?? null,
+    contractor_license_number:
+      (raw.contractor_license_number as string | null) ?? null,
+    contractor_license_status:
+      (raw.contractor_license_status as string | null) ?? null,
+    contractor_license_expires:
+      (raw.contractor_license_expires as string | null) ?? null,
     owner_name: (raw.owner_name as string | null) ?? null,
     category: ((raw.category as string | null) ?? "other") || "other",
     source: ((raw.source as string | null) ?? "") || "",

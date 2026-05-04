@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  BadgeCheck,
   Calendar,
   ExternalLink,
   Hammer,
+  Mail,
   MapPin,
   Phone,
   User,
@@ -168,30 +170,15 @@ function DrawerBody({ lead }: { lead: DumpsterLead }) {
         </Section>
 
         {/* Contractor section */}
+        <ContractorSection lead={lead} />
+
+        {/* Owner section */}
         <Section
           icon={<User className="h-4 w-4" />}
-          title="Contractor & owner"
+          title="Owner"
           accent="from-slate-50 to-white"
         >
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <KV
-              label="Contractor"
-              value={lead.contractor_company ?? "—"}
-            />
-            <KV
-              label="Owner"
-              value={lead.owner_name ?? "—"}
-            />
-          </div>
-          {lead.contractor_phone && (
-            <a
-              href={`tel:${lead.contractor_phone.replace(/\D/g, "")}`}
-              className="mt-3 inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100"
-            >
-              <Phone className="h-4 w-4" />
-              Call {formatPhone(lead.contractor_phone)}
-            </a>
-          )}
+          <KV label="Owner" value={lead.owner_name ?? "—"} />
         </Section>
 
         {/* Source */}
@@ -208,6 +195,133 @@ function DrawerBody({ lead }: { lead: DumpsterLead }) {
           </div>
         </Section>
       </div>
+    </div>
+  );
+}
+
+function ContractorSection({ lead }: { lead: DumpsterLead }) {
+  const hasAny =
+    lead.contractor_company ||
+    lead.contractor_phone ||
+    lead.contractor_email ||
+    lead.contractor_license_number;
+
+  if (!hasAny) {
+    return (
+      <Section
+        icon={<Hammer className="h-4 w-4" />}
+        title="Contractor"
+        accent="from-slate-50 to-white"
+      >
+        <div className="text-sm text-slate-500">No contractor on file</div>
+      </Section>
+    );
+  }
+
+  const phoneDigits = lead.contractor_phone?.replace(/\D/g, "") ?? "";
+  const status = lead.contractor_license_status;
+  const statusPillClass =
+    status === "Active"
+      ? "bg-emerald-100 text-emerald-800"
+      : status === "Expired"
+        ? "bg-amber-100 text-amber-800"
+        : "bg-slate-100 text-slate-700";
+
+  return (
+    <section className="rounded-xl border border-slate-200 bg-gradient-to-br from-indigo-50/40 to-white p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-slate-900">Contractor</h3>
+      <div className="mt-4 flex flex-col gap-3">
+        {lead.contractor_company && (
+          <Row label="Company">
+            <span className="text-sm font-medium text-slate-900">
+              {lead.contractor_company}
+            </span>
+          </Row>
+        )}
+
+        {lead.contractor_phone && (
+          <Row label="Phone">
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href={`tel:${phoneDigits}`}
+                className="text-base font-semibold text-indigo-700 hover:text-indigo-600"
+              >
+                {formatPhone(lead.contractor_phone)}
+              </a>
+              <a
+                href={`tel:${phoneDigits}`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+              >
+                <Phone className="h-3.5 w-3.5" />
+                Call
+              </a>
+            </div>
+          </Row>
+        )}
+
+        {lead.contractor_email && (
+          <Row label="Email">
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href={`mailto:${lead.contractor_email}`}
+                className="break-all text-sm font-medium text-indigo-700 hover:text-indigo-600"
+              >
+                {lead.contractor_email}
+              </a>
+              <a
+                href={`mailto:${lead.contractor_email}`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                Email
+              </a>
+            </div>
+          </Row>
+        )}
+
+        {lead.contractor_license_number && (
+          <Row label="License">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-semibold text-slate-900">
+                {lead.contractor_license_number}
+              </span>
+              {status && (
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                    statusPillClass,
+                  )}
+                >
+                  {status === "Active" && <BadgeCheck className="h-3 w-3" />}
+                  {status}
+                </span>
+              )}
+              {lead.contractor_license_expires && (
+                <span className="text-xs text-slate-500">
+                  Expires {fmtDate(lead.contractor_license_expires)}
+                </span>
+              )}
+            </div>
+          </Row>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function Row({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-1 sm:grid-cols-[120px_1fr] sm:items-center sm:gap-4">
+      <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+        {label}
+      </div>
+      <div>{children}</div>
     </div>
   );
 }
