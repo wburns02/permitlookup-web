@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/",
+        has: [
+          {
+            type: "host",
+            value: "dumpster.ecbtx.com",
+          },
+        ],
+        destination: "/dumpster-leads",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
