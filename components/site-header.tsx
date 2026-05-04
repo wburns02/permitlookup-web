@@ -5,14 +5,31 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
+type NavLink = { href: string; label: string };
+
+export type SiteHeaderVariant = "default" | "dumpster";
+
+const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/hail-leads", label: "Hail Leads" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#contact", label: "Contact" },
 ];
 
-export function SiteHeader() {
+const DUMPSTER_NAV_LINKS: NavLink[] = [
+  { href: "/dumpster-leads", label: "Home" },
+  {
+    href: "mailto:contact@permitlookup.com?subject=Dumpster%20Leads%20pricing",
+    label: "Pricing",
+  },
+  { href: "mailto:contact@permitlookup.com", label: "Contact" },
+];
+
+export function SiteHeader({
+  variant = "default",
+}: {
+  variant?: SiteHeaderVariant;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -22,6 +39,11 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const isDumpster = variant === "dumpster";
+  const navLinks = isDumpster ? DUMPSTER_NAV_LINKS : DEFAULT_NAV_LINKS;
+  const logoHref = isDumpster ? "/dumpster-leads" : "/";
+  const ctaHref = isDumpster ? "/dumpster-leads" : "/hail-leads";
 
   return (
     <header
@@ -34,7 +56,7 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
-          href="/"
+          href={logoHref}
           className="flex items-baseline gap-1 text-lg font-semibold tracking-tight text-slate-900"
         >
           <span className="text-indigo-600">Permit</span>
@@ -52,7 +74,7 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link
-            href="/hail-leads"
+            href={ctaHref}
             className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-500"
           >
             See Demo
@@ -83,7 +105,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/hail-leads"
+              href={ctaHref}
               onClick={() => setOpen(false)}
               className="mt-2 rounded-md bg-indigo-600 px-3 py-3 text-center text-base font-medium text-white hover:bg-indigo-500"
             >
