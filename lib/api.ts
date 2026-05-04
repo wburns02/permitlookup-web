@@ -1,8 +1,12 @@
 /**
  * Thin typed fetch client for the PermitLookup hail-leads API.
  *
- * - Auth: X-API-Key header from NEXT_PUBLIC_DEMO_API_KEY
- * - Base: NEXT_PUBLIC_API_BASE
+ * - Transport: same-origin Next route handler at `/api/hail-leads/*`
+ *   (see `app/api/hail-leads/[[...path]]/route.ts`). The proxy adds the
+ *   `X-API-Key` header server-side and forwards to Railway. Going same-origin
+ *   sidesteps Railway's CORS allowlist (which doesn't include hail.ecbtx.com
+ *   for the per-lead detail endpoint) and means we don't have to ship a
+ *   server-side CORS fix while permit-api Railway auto-deploy is broken.
  * - Returns typed JSON; throws ApiError with status + message on non-2xx
  *
  * Next.js 16 fetch is uncached by default. Callers can pass `cache` / `next`
@@ -22,10 +26,9 @@ import {
   type CachedHailLeadsStats,
 } from "./cache";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE ??
-  "https://permit-api-production-6eae.up.railway.app";
-const API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY ?? "";
+// Same-origin proxy. The route handler injects X-API-Key and forwards to
+// `${NEXT_PUBLIC_API_BASE}/v1/hail-leads/...`.
+const PROXY_BASE = "/api/hail-leads";
 
 export class ApiError extends Error {
   status: number;
@@ -44,12 +47,16 @@ type FetchInit = Omit<RequestInit, "headers"> & {
 };
 
 async function request<T>(path: string, init: FetchInit = {}): Promise<T> {
-  const url = `${API_BASE}${path}`;
+  // `path` is the upstream path (e.g. "/v1/hail-leads/<id>"). We strip the
+  // "/v1/hail-leads" prefix because our same-origin proxy is mounted at
+  // "/api/hail-leads" and re-adds the upstream prefix server-side.
+  const stripped = path.replace(/^\/v1\/hail-leads/, "");
+  const url = `${PROXY_BASE}${stripped}`;
   const headers: Record<string, string> = {
     Accept: "application/json",
     ...(init.headers ?? {}),
   };
-  if (API_KEY) headers["X-API-Key"] = API_KEY;
+  // No X-API-Key on the client: the proxy attaches it server-side.
 
   const res = await fetch(url, {
     ...init,
@@ -198,10 +205,10 @@ export async function downloadHailLeadsCsv(
   filters: Omit<HailLeadsFilters, "page" | "page_size">,
 ): Promise<void> {
   const qs = filtersToSearchParams({ ...filters }).toString();
-  const url = `${API_BASE}/v1/hail-leads/export.csv${qs ? `?${qs}` : ""}`;
-  const res = await fetch(url, {
-    headers: API_KEY ? { "X-API-Key": API_KEY } : {},
-  });
+  // Same-origin proxy. The route handler attaches X-API-Key server-side
+  // and preserves Content-Disposition so the file naming below still works.
+  const url = `${PROXY_BASE}/export.csv${qs ? `?${qs}` : ""}`;
+  const res = await fetch(url);
   if (!res.ok) {
     const body = await res.text().catch(() => null);
     throw new ApiError(
