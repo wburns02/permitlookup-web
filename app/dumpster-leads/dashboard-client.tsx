@@ -64,6 +64,8 @@ export function DumpsterLeadsDashboard() {
     const rows = filteredLeads;
     const headers = [
       "lead_id",
+      "lead_grade",
+      "lead_score",
       "address",
       "city",
       "zip",
@@ -197,6 +199,17 @@ function applyFilters(
   });
 
   out = out.slice().sort((a, b) => {
+    if (f.sort === "grade") {
+      // Grade A first, missing/null last. Tiebreak by score desc.
+      const ag = a.lead_score ?? -1;
+      const bg = b.lead_score ?? -1;
+      if (ag !== bg) return bg - ag;
+      const aIso = a.effective_date ?? a.issue_date ?? a.applied_date;
+      const bIso = b.effective_date ?? b.issue_date ?? b.applied_date;
+      const at = aIso ? Date.parse(aIso) : 0;
+      const bt = bIso ? Date.parse(bIso) : 0;
+      return bt - at;
+    }
     const aIso = a.effective_date ?? a.issue_date ?? a.applied_date;
     const bIso = b.effective_date ?? b.issue_date ?? b.applied_date;
     const at = aIso ? Date.parse(aIso) : 0;

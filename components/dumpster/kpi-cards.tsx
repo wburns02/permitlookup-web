@@ -1,6 +1,13 @@
 "use client";
 
-import { AlertTriangle, Calendar, CalendarClock, Layers, Truck } from "lucide-react";
+import {
+  AlertTriangle,
+  Calendar,
+  CalendarClock,
+  Layers,
+  Star,
+  Truck,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { CachedDumpsterStats } from "@/lib/dumpster-cache";
@@ -123,6 +130,9 @@ export function DumpsterKpiCards(props: Props) {
   const { stats, leads } = props;
   const top = topCategory(leads);
   const latest = formatRelativeDays(stats.latest_permit_date);
+  const aGradeCount = stats.top_grade_count_30d;
+  const showAGrade =
+    typeof aGradeCount === "number" && Number.isFinite(aGradeCount);
 
   const cards: {
     icon: React.ReactNode;
@@ -152,13 +162,23 @@ export function DumpsterKpiCards(props: Props) {
       sub: top.count > 0 ? `${top.count} leads` : "—",
       accent: "bg-emerald-50 text-emerald-600",
     },
-    {
-      icon: <Calendar className="h-5 w-5" />,
-      label: "Latest permit",
-      value: latest.label,
-      sub: latest.sub ? `${latest.sub} · freshest signal` : "freshest signal",
-      accent: "bg-amber-50 text-amber-600",
-    },
+    showAGrade
+      ? {
+          icon: <Star className="h-5 w-5" />,
+          label: "A-grade leads (30d)",
+          value: formatBigNumber(aGradeCount as number),
+          sub: "highest priority",
+          accent: "bg-emerald-50 text-emerald-600",
+        }
+      : {
+          icon: <Calendar className="h-5 w-5" />,
+          label: "Latest permit",
+          value: latest.label,
+          sub: latest.sub
+            ? `${latest.sub} · freshest signal`
+            : "freshest signal",
+          accent: "bg-amber-50 text-amber-600",
+        },
   ];
 
   return (

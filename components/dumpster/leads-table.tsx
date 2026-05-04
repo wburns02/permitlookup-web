@@ -12,7 +12,54 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import type { DumpsterLead } from "@/lib/dumpster-types";
+import type { DumpsterLead, DumpsterLeadGrade } from "@/lib/dumpster-types";
+
+// ---------------------------------------------------------------------------
+// Lead grade pill — at-a-glance scanning aid
+// ---------------------------------------------------------------------------
+
+const GRADE_PILL_BG: Record<DumpsterLeadGrade, string> = {
+  A: "bg-emerald-600 text-white",
+  B: "bg-indigo-600 text-white",
+  C: "bg-amber-500 text-white",
+  D: "bg-orange-500 text-white",
+  F: "bg-slate-400 text-white",
+};
+
+export function LeadGradePill({
+  grade,
+  size = "sm",
+}: {
+  grade: DumpsterLeadGrade | null | undefined;
+  size?: "sm" | "lg";
+}) {
+  if (!grade) {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center justify-center text-slate-300",
+          size === "lg" ? "h-12 w-12 text-lg" : "h-7 w-7 text-sm",
+        )}
+        aria-label="No grade"
+      >
+        —
+      </span>
+    );
+  }
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center rounded-md font-bold shadow-sm",
+        GRADE_PILL_BG[grade],
+        size === "lg" ? "h-12 w-12 text-2xl" : "h-7 w-7 text-sm",
+      )}
+      aria-label={`Grade ${grade}`}
+      title={`Lead grade ${grade}`}
+    >
+      {grade}
+    </span>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -129,7 +176,10 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 hover:bg-slate-50">
-              <TableHead className="pl-5">Address</TableHead>
+              <TableHead className="w-12 pl-5 pr-2">
+                <span className="sr-only">Grade</span>
+              </TableHead>
+              <TableHead>Address</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Issued / Applied</TableHead>
@@ -202,8 +252,11 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
                     )}
                 </div>
               </div>
-              <div className="flex shrink-0 items-center gap-1 pt-1 text-xs font-medium text-indigo-600">
-                View <ChevronRight className="h-3 w-3" />
+              <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
+                <LeadGradePill grade={r.lead_grade ?? null} />
+                <div className="flex items-center gap-1 text-xs font-medium text-indigo-600">
+                  View <ChevronRight className="h-3 w-3" />
+                </div>
               </div>
             </button>
           </li>
@@ -229,7 +282,10 @@ function DesktopRow({
       onClick={onClick}
       className="cursor-pointer transition-colors duration-150 ease-in-out hover:bg-slate-50"
     >
-      <TableCell className="pl-5 font-medium text-slate-900">
+      <TableCell className="pl-5 pr-2 align-middle">
+        <LeadGradePill grade={row.lead_grade ?? null} />
+      </TableCell>
+      <TableCell className="font-medium text-slate-900">
         <div className="max-w-[240px] truncate">{row.address ?? "—"}</div>
         {cityLine && (
           <div className="text-[11px] font-normal text-slate-400">
@@ -308,8 +364,9 @@ function TableSkeleton() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="grid grid-cols-[2fr_1fr_2fr_1fr_1fr_1fr] items-center gap-3 px-3 py-3"
+            className="grid grid-cols-[40px_2fr_1fr_2fr_1fr_1fr_1fr] items-center gap-3 px-3 py-3"
           >
+            <Skeleton className="h-7 w-7 rounded-md" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />

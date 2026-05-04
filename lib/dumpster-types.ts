@@ -23,7 +23,11 @@ export type DumpsterStats = {
   median_valuation_30d: number;
   fresh_leads_this_week: number;
   latest_permit_date: string | null;
+  /** Count of A-grade leads in the last 30 days. Populated by Stage F1. */
+  top_grade_count_30d?: number | null;
 };
+
+export type DumpsterLeadGrade = "A" | "B" | "C" | "D" | "F";
 
 // ---------------------------------------------------------------------------
 // Leads
@@ -39,7 +43,7 @@ export type DumpsterCategory =
   | "pool"
   | "other";
 
-export type DumpsterSortKey = "newest" | "oldest";
+export type DumpsterSortKey = "newest" | "oldest" | "grade";
 
 export type DumpsterLead = {
   lead_id: string;
@@ -64,6 +68,10 @@ export type DumpsterLead = {
   owner_name: string | null;
   category: DumpsterCategory | string;
   source: string;
+  /** 0-100 numeric quality score. Populated by Stage F1. */
+  lead_score?: number | null;
+  /** Letter grade derived from lead_score. Populated by Stage F1. */
+  lead_grade?: DumpsterLeadGrade | null;
 };
 
 export type DumpsterLeadsResponse = {

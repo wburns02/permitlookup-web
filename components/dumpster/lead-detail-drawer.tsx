@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import type { DumpsterLead } from "@/lib/dumpster-types";
-import { CategoryBadge } from "./leads-table";
+import { CategoryBadge, LeadGradePill } from "./leads-table";
 
 type Props = {
   lead: DumpsterLead | null;
@@ -116,6 +116,28 @@ function DrawerBody({ lead }: { lead: DumpsterLead }) {
       </SheetHeader>
 
       <div className="flex flex-col gap-5 p-6">
+        {/* Lead quality (grade + score) — only when populated */}
+        {lead.lead_grade && (
+          <section className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5 shadow-sm">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+              Lead quality
+            </div>
+            <div className="mt-3 flex items-center gap-4">
+              <LeadGradePill grade={lead.lead_grade} size="lg" />
+              <div className="flex flex-col">
+                <div className="text-sm text-slate-500">
+                  {lead.lead_score != null
+                    ? `score ${lead.lead_score} / 100`
+                    : "score unavailable"}
+                </div>
+                <div className="text-xs text-slate-400">
+                  Higher grades get priority outreach.
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Permit section */}
         <Section
           icon={<Hammer className="h-4 w-4" />}

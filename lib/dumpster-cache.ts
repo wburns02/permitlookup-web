@@ -16,9 +16,20 @@
 
 import type {
   DumpsterLead,
+  DumpsterLeadGrade,
   DumpsterLeadsResponse,
   DumpsterStats,
 } from "./dumpster-types";
+
+const VALID_GRADES = new Set<DumpsterLeadGrade>(["A", "B", "C", "D", "F"]);
+
+function toGradeOrNull(v: unknown): DumpsterLeadGrade | null {
+  if (typeof v !== "string") return null;
+  const upper = v.toUpperCase();
+  return VALID_GRADES.has(upper as DumpsterLeadGrade)
+    ? (upper as DumpsterLeadGrade)
+    : null;
+}
 
 const UPSTREAM_BASE =
   process.env.DASHBOARD_CACHE_UPSTREAM ??
@@ -109,6 +120,8 @@ function coerceLead(raw: Record<string, unknown>): DumpsterLead {
     owner_name: (raw.owner_name as string | null) ?? null,
     category: ((raw.category as string | null) ?? "other") || "other",
     source: ((raw.source as string | null) ?? "") || "",
+    lead_score: toNumberOrNull(raw.lead_score),
+    lead_grade: toGradeOrNull(raw.lead_grade),
   };
 }
 
@@ -159,6 +172,7 @@ export async function getCachedDumpsterStats(
         FALLBACK_DUMPSTER_STATS.fresh_leads_this_week,
       latest_permit_date:
         (raw.latest_permit_date as string | null) ?? null,
+      top_grade_count_30d: toNumberOrNull(raw.top_grade_count_30d),
       generated_at: (raw.generated_at as string | undefined) ?? undefined,
     };
   } catch {
