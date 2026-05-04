@@ -122,7 +122,7 @@ type Props = {
 
 export function LeadsTable({ filters, onSourceChange }: Props) {
   const [state, setState] = useState<State>({ status: "loading" });
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [selectedLead, setSelectedLead] = useState<HailLeadListItem | null>(null);
   const sourceRef = useRef<Source | null>(null);
 
   const effectiveFilters: HailLeadsFilters = {
@@ -262,7 +262,7 @@ export function LeadsTable({ filters, onSourceChange }: Props) {
                 <DesktopRow
                   key={r.lead_id}
                   row={r}
-                  onClick={() => setSelectedLeadId(r.lead_id)}
+                  onClick={() => setSelectedLead(r)}
                 />
               ))}
             </TableBody>
@@ -275,7 +275,7 @@ export function LeadsTable({ filters, onSourceChange }: Props) {
             <li key={r.lead_id}>
               <button
                 type="button"
-                onClick={() => setSelectedLeadId(r.lead_id)}
+                onClick={() => setSelectedLead(r)}
                 className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50"
               >
                 <div className="min-w-0 flex-1">
@@ -301,8 +301,9 @@ export function LeadsTable({ filters, onSourceChange }: Props) {
       <Pagination data={data} filters={effectiveFilters} />
 
       <LeadDetailDrawer
-        leadId={selectedLeadId}
-        onClose={() => setSelectedLeadId(null)}
+        leadId={selectedLead?.lead_id ?? null}
+        row={selectedLead}
+        onClose={() => setSelectedLead(null)}
       />
     </>
   );

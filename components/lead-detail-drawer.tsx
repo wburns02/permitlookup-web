@@ -9,6 +9,7 @@ import {
   ChevronUp,
   Copy,
   CloudRain,
+  ExternalLink,
   Hammer,
   Home,
   Mail,
@@ -29,10 +30,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getHailLeadDetail } from "@/lib/api";
-import type { HailLeadDetail, HailLeadPhone } from "@/lib/types";
+import type {
+  HailLeadDetail,
+  HailLeadListItem,
+  HailLeadPhone,
+} from "@/lib/types";
 
 type Props = {
   leadId: string | null;
+  row: HailLeadListItem | null;
   onClose: () => void;
 };
 
@@ -42,7 +48,7 @@ type State =
   | { status: "ok"; data: HailLeadDetail }
   | { status: "error"; message: string };
 
-export function LeadDetailDrawer({ leadId, onClose }: Props) {
+export function LeadDetailDrawer({ leadId, row, onClose }: Props) {
   const [state, setState] = useState<State>({ status: "idle" });
   const open = leadId !== null;
 
@@ -81,7 +87,8 @@ export function LeadDetailDrawer({ leadId, onClose }: Props) {
         className="w-full bg-white sm:!max-w-2xl"
       >
         {state.status === "loading" && <DrawerSkeleton />}
-        {state.status === "error" && (
+        {state.status === "error" && row && <FallbackDrawerBody row={row} />}
+        {state.status === "error" && !row && (
           <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
             <AlertTriangle className="h-8 w-8 text-amber-500" />
             <div className="text-base font-medium text-slate-900">
@@ -173,6 +180,11 @@ function CategoryBadge({ value }: { value: string | null | undefined }) {
       {label}
     </span>
   );
+}
+
+function mapsHref(parts: Array<string | null | undefined>): string {
+  const q = parts.filter(Boolean).join(", ");
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -331,6 +343,182 @@ function DrawerBody({ lead }: { lead: HailLeadDetail }) {
 
         {/* Owner section */}
         <OwnerSection lead={lead} />
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Fallback drawer body — rendered when the detail fetch fails. Uses only the
+// data we already have on the list row (the `HailLeadListItem`) so the user
+// still sees the lead instead of a barren error screen.
+// ---------------------------------------------------------------------------
+
+function FallbackDrawerBody({ row }: { row: HailLeadListItem }) {
+  const cityLine = [row.city, row.zip].filter(Boolean).join(", ");
+  const hail = row.hail_size_inches ?? 0;
+  const hailPct = Math.min(100, Math.round((hail / 3) * 100));
+  const hailSeverityColor =
+    hail >= 2 ? "bg-red-500" : hail >= 1.25 ? "bg-amber-500" : "bg-sky-500";
+
+  const priorRoofs = row.prior_roof_permits ?? 0;
+  const lastRoof = row.last_roof_permit_date;
+  const lastRoofYear = lastRoof ? new Date(lastRoof).getFullYear() : null;
+  const ageYears = lastRoofYear
+    ? new Date().getFullYear() - lastRoofYear
+    : null;
+
+  return (
+    <div className="flex h-full flex-col overflow-y-auto">
+      <SheetHeader className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-6 pt-6 pb-4 backdrop-blur">
+        <SheetTitle className="text-xl font-semibold text-slate-900">
+          {row.address ?? "Unknown address"}
+        </SheetTitle>
+        <SheetDescription className="text-slate-500">
+          {cityLine || "—"}
+          {row.county ? ` · ${row.county} Co.` : ""}
+        </SheetDescription>
+      </SheetHeader>
+
+      <div className="flex flex-col gap-5 p-6">
+        {/* Stale-snapshot warning */}
+        <div
+          role="status"
+          className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900"
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <div>
+            <div className="font-medium text-amber-900">
+              Showing cached snapshot
+            </div>
+            <div className="mt-0.5 text-amber-800">
+              Live detail unavailable. Refresh later for owner / contractor
+              enrichment.
+            </div>
+          </div>
+        </div>
+
+        {/* Top row: category + score + maps link */}
+        <div className="flex flex-wrap items-center gap-3">
+          <CategoryBadge value={row.lead_category} />
+          {row.score != null && (
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+              Score {row.score}
+            </span>
+          )}
+          <a
+            href={mapsHref([row.address, row.city, row.zip])}
+            target="_blank"
+            rel="noreferrer"
+            className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            Open in Maps <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
+
+        {/* Storm card */}
+        <Section
+          icon={<CloudRain className="h-4 w-4" />}
+          title="Storm hit"
+          accent="from-sky-50 to-white"
+        >
+          <div className="text-slate-900">
+            <span className="font-medium">{row.storm_type ?? "Hail"}</span>{" "}
+            on {fmtDate(row.storm_date)}{" "}
+            <span className="text-slate-500">
+              ({fmtDaysAgo(row.storm_date)})
+            </span>
+          </div>
+          <div className="mt-1 text-sm text-slate-600">
+            Hail size:{" "}
+            <span className="font-medium text-slate-900">
+              {hail ? `${hail.toFixed(2)}"` : "unknown"}
+            </span>{" "}
+            diameter
+          </div>
+          <div className="mt-4">
+            <div className="mb-1 flex items-center justify-between text-[11px] font-medium uppercase tracking-wide text-slate-500">
+              <span>Severity</span>
+              <span>3&quot; scale</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  hailSeverityColor,
+                )}
+                style={{ width: `${hailPct}%` }}
+              />
+            </div>
+          </div>
+        </Section>
+
+        {/* Permit card */}
+        <Section
+          icon={<Hammer className="h-4 w-4" />}
+          title="Permit pulled"
+          accent="from-indigo-50 to-white"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-slate-900">
+                <span className="font-medium">{fmtDate(row.permit_date)}</span>
+                {row.days_after_storm != null && (
+                  <span className="ml-2 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                    {row.days_after_storm} days after storm
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          {row.permit_description && (
+            <div className="mt-3 max-h-28 overflow-y-auto rounded-lg bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
+              {row.permit_description}
+            </div>
+          )}
+          {row.competitor_contractor && (
+            <div className="mt-3 grid grid-cols-1 gap-3 text-sm">
+              <KV label="Contractor" value={row.competitor_contractor} />
+            </div>
+          )}
+        </Section>
+
+        {/* Address history (only if there's anything to say) */}
+        {(priorRoofs > 0 || lastRoofYear) && (
+          <Section
+            icon={<Calendar className="h-4 w-4" />}
+            title="Address history"
+            accent="from-slate-50 to-white"
+          >
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {priorRoofs > 0 && (
+                <KV
+                  label="Prior roofs"
+                  value={
+                    <span className="inline-flex items-center gap-1 text-amber-800">
+                      <ShieldAlert className="h-3 w-3" /> {priorRoofs}
+                    </span>
+                  }
+                />
+              )}
+              {lastRoofYear && (
+                <KV
+                  label="Last roof"
+                  value={
+                    <>
+                      {lastRoofYear}
+                      {ageYears !== null && (
+                        <span className="ml-1 text-xs text-slate-500">
+                          ({ageYears}y ago)
+                        </span>
+                      )}
+                    </>
+                  }
+                />
+              )}
+            </div>
+          </Section>
+        )}
       </div>
     </div>
   );
