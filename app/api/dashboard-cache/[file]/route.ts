@@ -22,7 +22,12 @@ const UPSTREAM_BASE =
   process.env.DASHBOARD_CACHE_UPSTREAM ??
   "https://soc-api.tailad2d5f.ts.net/dashboard-cache";
 
-const ALLOWED_FILES = new Set(["stats", "default_leads"]);
+const ALLOWED_FILES = new Set([
+  "stats",
+  "default_leads",
+  "dumpster_stats",
+  "dumpster_default_leads",
+]);
 
 export async function GET(
   _req: Request,
