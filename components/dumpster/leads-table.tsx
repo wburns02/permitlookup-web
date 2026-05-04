@@ -132,7 +132,7 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
               <TableHead className="pl-5">Address</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Issued</TableHead>
+              <TableHead>Issued / Applied</TableHead>
               <TableHead>Contractor</TableHead>
               <TableHead className="pr-5">Source</TableHead>
             </TableRow>
@@ -165,7 +165,12 @@ export function DumpsterLeadsTable({ leads, loading, onSelect }: Props) {
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <CategoryBadge value={r.category} />
                   <span>·</span>
-                  <span>Issued {fmtRelative(r.issue_date)}</span>
+                  <span>
+                    {r.issue_date ? "Issued" : r.applied_date ? "Applied" : "Issued"}{" "}
+                    {fmtRelative(
+                      r.effective_date ?? r.issue_date ?? r.applied_date,
+                    )}
+                  </span>
                 </div>
                 {r.description && (
                   <div className="mt-1 line-clamp-2 text-xs text-slate-600">
@@ -230,10 +235,26 @@ function DesktopRow({
         </div>
       </TableCell>
       <TableCell>
-        <div className="text-slate-900">{fmtAbsolute(row.issue_date)}</div>
-        <div className="text-[11px] text-slate-400">
-          {fmtRelative(row.issue_date)}
-        </div>
+        {(() => {
+          const dateIso =
+            row.effective_date ?? row.issue_date ?? row.applied_date;
+          const isApplied = !row.issue_date && !!row.applied_date;
+          return (
+            <>
+              <div className="text-slate-900">
+                {fmtAbsolute(dateIso)}
+                {isApplied && (
+                  <span className="ml-1.5 inline-flex items-center rounded-full bg-amber-50 px-1.5 py-0 text-[10px] font-medium text-amber-700 ring-1 ring-amber-200/60">
+                    applied
+                  </span>
+                )}
+              </div>
+              <div className="text-[11px] text-slate-400">
+                {fmtRelative(dateIso)}
+              </div>
+            </>
+          );
+        })()}
       </TableCell>
       <TableCell>
         <div className="max-w-[180px] truncate text-xs text-slate-700">

@@ -89,6 +89,12 @@ function coerceLead(raw: Record<string, unknown>): DumpsterLead {
     work_class: (raw.work_class as string | null) ?? null,
     description: (raw.description as string | null) ?? null,
     issue_date: (raw.issue_date as string | null) ?? null,
+    applied_date: (raw.applied_date as string | null) ?? null,
+    effective_date:
+      (raw.effective_date as string | null) ??
+      (raw.issue_date as string | null) ??
+      (raw.applied_date as string | null) ??
+      null,
     days_since_issue: toNumberOrNull(raw.days_since_issue),
     valuation: toNumberOrNull(raw.valuation),
     contractor_company: (raw.contractor_company as string | null) ?? null,

@@ -71,6 +71,8 @@ export function DumpsterLeadsDashboard() {
       "category",
       "description",
       "issue_date",
+      "applied_date",
+      "effective_date",
       "days_since_issue",
       "contractor_company",
       "contractor_phone",
@@ -181,8 +183,9 @@ function applyFilters(
       if (!hay.includes(cityZipNeedle)) return false;
     }
     if (categories.size > 0 && !categories.has(l.category)) return false;
-    if (l.issue_date) {
-      const t = Date.parse(l.issue_date + "T00:00:00Z");
+    const dateIso = l.effective_date ?? l.issue_date ?? l.applied_date;
+    if (dateIso) {
+      const t = Date.parse(dateIso + "T00:00:00Z");
       if (!Number.isNaN(fromMs) && t < fromMs) return false;
       if (!Number.isNaN(toMs) && t > toMs) return false;
     }
@@ -194,8 +197,10 @@ function applyFilters(
   });
 
   out = out.slice().sort((a, b) => {
-    const at = a.issue_date ? Date.parse(a.issue_date) : 0;
-    const bt = b.issue_date ? Date.parse(b.issue_date) : 0;
+    const aIso = a.effective_date ?? a.issue_date ?? a.applied_date;
+    const bIso = b.effective_date ?? b.issue_date ?? b.applied_date;
+    const at = aIso ? Date.parse(aIso) : 0;
+    const bt = bIso ? Date.parse(bIso) : 0;
     return f.sort === "oldest" ? at - bt : bt - at;
   });
 

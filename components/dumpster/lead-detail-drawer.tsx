@@ -121,13 +121,37 @@ function DrawerBody({ lead }: { lead: DumpsterLead }) {
           accent="from-indigo-50 to-white"
         >
           <div className="flex flex-col gap-2">
-            <div className="text-slate-900">
-              <span className="font-medium">{fmtDate(lead.issue_date)}</span>
-              {lead.issue_date && (
-                <span className="ml-2 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
-                  {fmtDaysAgo(lead.issue_date)}
-                </span>
-              )}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Issued
+                </div>
+                <div className="mt-0.5 text-slate-900">
+                  <span className="font-medium">
+                    {fmtDate(lead.issue_date)}
+                  </span>
+                  {lead.issue_date && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                      {fmtDaysAgo(lead.issue_date)}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Applied
+                </div>
+                <div className="mt-0.5 text-slate-900">
+                  <span className="font-medium">
+                    {fmtDate(lead.applied_date)}
+                  </span>
+                  {lead.applied_date && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                      {fmtDaysAgo(lead.applied_date)}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
             {lead.description && (
               <div className="rounded-lg bg-slate-50 p-3 text-sm leading-relaxed text-slate-700">

@@ -51,6 +51,8 @@ export type DumpsterLead = {
   work_class: string | null;
   description: string | null;
   issue_date: string | null;
+  applied_date: string | null;
+  effective_date: string | null;
   days_since_issue: number | null;
   valuation: number | null;
   contractor_company: string | null;
