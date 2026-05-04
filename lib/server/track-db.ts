@@ -139,13 +139,25 @@ export function captureFromRequest(req: Request): ServerCapture {
   }
   const ua = h.get("user-agent");
   const ref = h.get("referer");
+  // Vercel URL-encodes geo headers (e.g. "San%20Marcos"). Decode so the
+  // row holds plain text; fall through if the value isn't well-formed.
+  const decode = (raw: string | null, max = 128): string | null => {
+    if (!raw) return null;
+    let v = raw;
+    try {
+      v = decodeURIComponent(raw);
+    } catch {
+      /* keep the raw value if it has malformed % escapes */
+    }
+    return cleanText(v, max);
+  };
   return {
     ip,
     user_agent: ua ? stripControl(ua, MAX_TEXT) : null,
     referrer: ref ? stripControl(ref, MAX_TEXT) : null,
-    geo_city: cleanText(h.get("x-vercel-ip-city"), 128),
-    geo_region: cleanText(h.get("x-vercel-ip-country-region"), 128),
-    geo_country: cleanText(h.get("x-vercel-ip-country"), 8),
+    geo_city: decode(h.get("x-vercel-ip-city")),
+    geo_region: decode(h.get("x-vercel-ip-country-region")),
+    geo_country: decode(h.get("x-vercel-ip-country"), 8),
   };
 }
 
