@@ -86,7 +86,7 @@ export function HailLeadsGate({ children }: { children: React.ReactNode }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-              placeholder={"hail-leads-demo-\u2026"}
+              placeholder={"#Espn2025"}
             />
           </div>
 
