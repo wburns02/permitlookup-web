@@ -36,6 +36,17 @@ const nextConfig: NextConfig = {
         destination: "/roofers",
         permanent: true,
       },
+      {
+        source: "/",
+        has: [
+          {
+            type: "host",
+            value: "broadband.ecbtx.com",
+          },
+        ],
+        destination: "/broadband",
+        permanent: true,
+      },
     ];
   },
 };
