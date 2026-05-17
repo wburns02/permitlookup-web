@@ -7,7 +7,11 @@ import { cn } from "@/lib/utils";
 
 type NavLink = { href: string; label: string };
 
-export type SiteHeaderVariant = "default" | "dumpster" | "broadband";
+export type SiteHeaderVariant =
+  | "default"
+  | "dumpster"
+  | "broadband"
+  | "roofers";
 
 const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
@@ -33,6 +37,13 @@ const BROADBAND_NAV_LINKS: NavLink[] = [
   { href: "/broadband/portal", label: "Portal" },
 ];
 
+const ROOFERS_NAV_LINKS: NavLink[] = [
+  { href: "/roofers", label: "Home" },
+  { href: "/roofers#try-it", label: "Try it" },
+  { href: "/roofers#docs", label: "Docs" },
+  { href: "/roofers#pricing", label: "Pricing" },
+];
+
 export function SiteHeader({
   variant = "default",
 }: {
@@ -50,25 +61,34 @@ export function SiteHeader({
 
   const isDumpster = variant === "dumpster";
   const isBroadband = variant === "broadband";
-  const navLinks = isBroadband
-    ? BROADBAND_NAV_LINKS
-    : isDumpster
-      ? DUMPSTER_NAV_LINKS
-      : DEFAULT_NAV_LINKS;
-  const logoHref = isBroadband
-    ? "/broadband"
-    : isDumpster
-      ? "/dumpster-leads"
-      : "/";
-  const ctaHref = isBroadband
-    ? "/broadband#try-it"
-    : isDumpster
-      ? "/dumpster-leads"
-      : "/hail-leads";
-  const ctaLabel = isBroadband ? "Try the API" : "See Demo";
-  const ctaClass = isBroadband
-    ? "bg-emerald-600 hover:bg-emerald-500"
-    : "bg-indigo-600 hover:bg-indigo-500";
+  const isRoofers = variant === "roofers";
+  const navLinks = isRoofers
+    ? ROOFERS_NAV_LINKS
+    : isBroadband
+      ? BROADBAND_NAV_LINKS
+      : isDumpster
+        ? DUMPSTER_NAV_LINKS
+        : DEFAULT_NAV_LINKS;
+  const logoHref = isRoofers
+    ? "/roofers"
+    : isBroadband
+      ? "/broadband"
+      : isDumpster
+        ? "/dumpster-leads"
+        : "/";
+  const ctaHref = isRoofers
+    ? "/roofers#try-it"
+    : isBroadband
+      ? "/broadband#try-it"
+      : isDumpster
+        ? "/dumpster-leads"
+        : "/hail-leads";
+  const ctaLabel =
+    isRoofers || isBroadband ? "Try the API" : "See Demo";
+  const ctaClass =
+    isRoofers || isBroadband
+      ? "bg-emerald-600 hover:bg-emerald-500"
+      : "bg-indigo-600 hover:bg-indigo-500";
 
   return (
     <header

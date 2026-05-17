@@ -14,6 +14,28 @@ const nextConfig: NextConfig = {
         destination: "/dumpster-leads",
         permanent: true,
       },
+      {
+        source: "/",
+        has: [
+          {
+            type: "host",
+            value: "storms.ecbtx.com",
+          },
+        ],
+        destination: "/roofers",
+        permanent: true,
+      },
+      {
+        source: "/",
+        has: [
+          {
+            type: "host",
+            value: "roofers.ecbtx.com",
+          },
+        ],
+        destination: "/roofers",
+        permanent: true,
+      },
     ];
   },
 };

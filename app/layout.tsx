@@ -23,6 +23,8 @@ async function resolveHeaderVariant(): Promise<SiteHeaderVariant> {
   const host = (h.get("x-forwarded-host") ?? h.get("host") ?? "").toLowerCase();
   if (host.startsWith("dumpster.")) return "dumpster";
   if (host.startsWith("broadband.")) return "broadband";
+  if (host.startsWith("storms.") || host.startsWith("roofers."))
+    return "roofers";
   return "default";
 }
 
