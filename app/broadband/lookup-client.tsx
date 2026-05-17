@@ -57,7 +57,7 @@ type ErrorPayload = { error?: string; message?: string; detail?: string };
 function techChip(tech: string): { label: string; className: string } {
   const t = tech.toLowerCase();
   if (t.includes("fiber"))
-    return { label: "Fiber", className: "bg-emerald-100 text-emerald-800" };
+    return { label: "Fiber", className: "bg-sky-100 text-sky-800" };
   if (t.includes("cable") || t.includes("coax") || t.includes("docsis"))
     return { label: "Cable", className: "bg-indigo-100 text-indigo-800" };
   if (t.includes("satellite"))
@@ -154,7 +154,7 @@ export function BroadbandLookup() {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder="1600 Pennsylvania Avenue"
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
           />
         </div>
         <div className="md:col-span-3">
@@ -166,7 +166,7 @@ export function BroadbandLookup() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Washington"
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
           />
         </div>
         <div className="md:col-span-2">
@@ -180,7 +180,7 @@ export function BroadbandLookup() {
             value={state}
             onChange={(e) => setState(e.target.value.toUpperCase())}
             placeholder="DC"
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm uppercase text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm uppercase text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
           />
         </div>
         <div className="md:col-span-2">
@@ -192,14 +192,14 @@ export function BroadbandLookup() {
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             placeholder="20500"
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
           />
         </div>
         <div className="md:col-span-12">
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <>
@@ -247,7 +247,7 @@ function ResultPanel({ data }: { data: LookupResponse }) {
       {/* SUMMARY */}
       <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-b border-slate-200 pb-5">
         <div className="flex items-center gap-2 text-sm text-slate-500">
-          <MapPin className="h-4 w-4 text-emerald-600" />
+          <MapPin className="h-4 w-4 text-sky-600" />
           <span className="font-mono text-slate-900">
             {[data.address, data.city, data.state, data.zip]
               .filter(Boolean)
@@ -286,7 +286,7 @@ function ResultPanel({ data }: { data: LookupResponse }) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         {data.has_fiber && (
-          <Pill className="bg-emerald-100 text-emerald-800">Fiber</Pill>
+          <Pill className="bg-sky-100 text-sky-800">Fiber</Pill>
         )}
         {data.has_cable && (
           <Pill className="bg-indigo-100 text-indigo-800">Cable</Pill>
@@ -366,7 +366,7 @@ function ResultPanel({ data }: { data: LookupResponse }) {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                        <Wifi className="h-4 w-4 text-emerald-600" />
+                        <Wifi className="h-4 w-4 text-sky-600" />
                         {p.brand_name ?? "Unknown ISP"}
                       </div>
                       {p.holding_company_name &&
@@ -399,7 +399,7 @@ function ResultPanel({ data }: { data: LookupResponse }) {
                         : "—"}
                     </div>
                     {p.low_latency && (
-                      <div className="col-span-2 flex items-center gap-1.5 text-emerald-700">
+                      <div className="col-span-2 flex items-center gap-1.5 text-sky-700">
                         <CircleDot className="h-3.5 w-3.5" />
                         Low-latency
                       </div>
@@ -431,7 +431,7 @@ function Stat({
 }) {
   const valueColor =
     tone === "good"
-      ? "text-emerald-600"
+      ? "text-sky-600"
       : tone === "muted"
         ? "text-slate-400"
         : "text-slate-900";

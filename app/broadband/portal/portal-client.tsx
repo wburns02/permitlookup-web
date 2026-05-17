@@ -108,7 +108,7 @@ export function PortalClient({
   if (loading) {
     return (
       <div className="rounded-xl border border-slate-200 bg-white p-8 text-sm text-slate-500 shadow-sm">
-        <Loader2 className="mr-2 inline h-4 w-4 animate-spin text-emerald-600" />
+        <Loader2 className="mr-2 inline h-4 w-4 animate-spin text-sky-600" />
         Loading portal&hellip;
       </div>
     );
@@ -143,12 +143,12 @@ export function PortalClient({
               placeholder="you@company.com"
               value={signinEmail}
               onChange={(e) => setSigninEmail(e.target.value)}
-              className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
             />
             <button
               type="submit"
               disabled={signinPending}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {signinPending ? (
                 <>
@@ -165,7 +165,7 @@ export function PortalClient({
             </p>
           )}
           {justCheckedOut && (
-            <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
+            <div className="mt-5 rounded-md border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-emerald-900">
               Payment received — your API key is on its way by email. Sign in
               above with the same address to manage your keys.
             </div>
@@ -177,15 +177,15 @@ export function PortalClient({
           </h3>
           <ul className="mt-4 space-y-3">
             <li className="flex gap-2">
-              <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-sky-600" />
               <span>Your active API keys with prefix + last-used time.</span>
             </li>
             <li className="flex gap-2">
-              <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-sky-600" />
               <span>Generate a new key or revoke an old one with one click.</span>
             </li>
             <li className="flex gap-2">
-              <Eye className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <Eye className="mt-0.5 h-4 w-4 shrink-0 text-sky-600" />
               <span>This month&apos;s usage vs your plan&apos;s monthly cap.</span>
             </li>
           </ul>
@@ -230,7 +230,7 @@ export function PortalClient({
               className={
                 "h-2 rounded-full " +
                 (pct < 75
-                  ? "bg-emerald-500"
+                  ? "bg-sky-500"
                   : pct < 95
                     ? "bg-amber-500"
                     : "bg-red-500")
@@ -246,7 +246,7 @@ export function PortalClient({
           <h2 className="text-lg font-semibold text-slate-900">API keys</h2>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-500"
+            className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-500"
           >
             <RefreshCw className="h-4 w-4" /> New key
           </button>
@@ -295,7 +295,7 @@ export function PortalClient({
                   className={
                     "rounded-full px-2.5 py-0.5 text-xs font-medium " +
                     (k.is_active
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-sky-100 text-sky-700"
                       : "bg-slate-200 text-slate-600")
                   }
                 >

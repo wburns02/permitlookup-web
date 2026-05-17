@@ -81,16 +81,16 @@ export default function BroadbandPricingPage() {
       <section className="relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-emerald-50 via-slate-50 to-slate-50"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-sky-50 via-slate-50 to-slate-50"
         />
         <div className="mx-auto max-w-6xl px-6 pb-12 pt-20 md:pt-28">
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-medium uppercase tracking-wide text-emerald-700">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white px-3 py-1 text-xs font-medium uppercase tracking-wide text-sky-700">
             Pricing
           </span>
           <h1 className="mt-6 text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-slate-900 md:text-6xl">
             Pay for what you use.
             <br className="hidden sm:block" />
-            <span className="text-emerald-600"> Free to start.</span>
+            <span className="text-sky-600"> Free to start.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             Three tiers. Same 924M-record FCC BDC dataset on every one. Upgrade
@@ -108,7 +108,7 @@ export default function BroadbandPricingPage() {
               className={
                 "flex flex-col rounded-xl border bg-white p-8 shadow-sm transition " +
                 (tier.featured
-                  ? "border-emerald-500 ring-1 ring-emerald-500"
+                  ? "border-sky-500 ring-1 ring-sky-500"
                   : "border-slate-200")
               }
             >
@@ -117,7 +117,7 @@ export default function BroadbandPricingPage() {
                   {tier.name}
                 </h2>
                 {tier.featured && (
-                  <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  <span className="rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700">
                     Most popular
                   </span>
                 )}
@@ -132,7 +132,7 @@ export default function BroadbandPricingPage() {
               <ul className="mt-6 space-y-3 text-sm text-slate-600">
                 {tier.bullets.map((b) => (
                   <li key={b} className="flex gap-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-sky-600" />
                     <span>{b}</span>
                   </li>
                 ))}
@@ -149,7 +149,7 @@ export default function BroadbandPricingPage() {
                     className={
                       "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition " +
                       (tier.featured
-                        ? "bg-emerald-600 text-white hover:bg-emerald-500"
+                        ? "bg-sky-600 text-white hover:bg-sky-500"
                         : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50")
                     }
                   >
@@ -165,7 +165,7 @@ export default function BroadbandPricingPage() {
       {/* FAQ */}
       <section className="bg-slate-50">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
+          <p className="text-sm font-semibold uppercase tracking-wide text-sky-600">
             FAQ
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
@@ -205,14 +205,14 @@ export default function BroadbandPricingPage() {
           Back to{" "}
           <Link
             href="/broadband"
-            className="text-emerald-600 hover:text-emerald-500"
+            className="text-sky-600 hover:text-sky-500"
           >
             /broadband
           </Link>{" "}
           &middot; manage your keys at{" "}
           <Link
             href="/broadband/portal"
-            className="text-emerald-600 hover:text-emerald-500"
+            className="text-sky-600 hover:text-sky-500"
           >
             /broadband/portal
           </Link>

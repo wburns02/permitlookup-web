@@ -128,3 +128,254 @@
     @apply font-sans;
   }
 }
+
+/* =============================================================================
+ * Per-product visual themes
+ * Each top-level product page wraps its content in <div data-theme="..."> so
+ * brand tokens cascade down. Shadcn primitives stay intact — we only retheme.
+ * ============================================================================= */
+
+/* ----- BROADBAND : cool blue + cyan on near-black ----- */
+[data-theme="broadband"] {
+  --brand: #0ea5e9;          /* sky-500 */
+  --brand-soft: #38bdf8;     /* sky-400 */
+  --brand-deep: #0369a1;     /* sky-700 */
+  --brand-ink: #e0f2fe;      /* sky-100 */
+  --brand-bg: #050816;
+  --brand-bg-2: #0c1429;
+  --brand-line: rgba(56, 189, 248, 0.22);
+  --brand-glow: rgba(14, 165, 233, 0.18);
+  --surface: #0b1220;
+  --surface-2: #111a2e;
+  --surface-border: rgba(148, 163, 184, 0.14);
+  --ink: #e2e8f0;
+  --ink-muted: #94a3b8;
+  --ink-faint: #64748b;
+  color-scheme: dark;
+}
+
+/* ----- STORMS / ROOFERS : storm-warning red-orange ----- */
+[data-theme="roofers"] {
+  --brand: #f97316;          /* orange-500 */
+  --brand-soft: #fb923c;     /* orange-400 */
+  --brand-deep: #c2410c;     /* orange-700 */
+  --brand-ink: #ffedd5;      /* orange-100 */
+  --brand-bg: #0b0a0a;
+  --brand-bg-2: #1a0f08;
+  --brand-line: rgba(251, 146, 60, 0.20);
+  --brand-glow: rgba(249, 115, 22, 0.22);
+  --surface: #14100d;
+  --surface-2: #1f1812;
+  --surface-border: rgba(251, 146, 60, 0.18);
+  --ink: #f5f5f4;
+  --ink-muted: #a8a29e;
+  --ink-faint: #78716c;
+  color-scheme: dark;
+}
+
+/* ----- HAIL-LEADS : ice-blue + silver on darker slate ----- */
+[data-theme="hail"] {
+  --brand: #7dd3fc;          /* sky-300 */
+  --brand-soft: #bae6fd;     /* sky-200 */
+  --brand-deep: #0284c7;     /* sky-600 */
+  --brand-ink: #f0f9ff;      /* sky-50 */
+  --brand-bg: #0a1626;
+  --brand-bg-2: #0f2238;
+  --brand-line: rgba(125, 211, 252, 0.18);
+  --brand-glow: rgba(125, 211, 252, 0.20);
+  --surface: #0e1a2b;
+  --surface-2: #14253b;
+  --surface-border: rgba(148, 184, 220, 0.16);
+  --ink: #e5edf5;
+  --ink-muted: #94a3b8;
+  --ink-faint: #64748b;
+  color-scheme: dark;
+}
+
+/* ----- DUMPSTER-LEADS : construction yellow + black ----- */
+[data-theme="dumpster"] {
+  --brand: #facc15;          /* yellow-400 */
+  --brand-soft: #fde047;     /* yellow-300 */
+  --brand-deep: #a16207;     /* yellow-700 */
+  --brand-ink: #fef9c3;      /* yellow-100 */
+  --brand-bg: #050505;
+  --brand-bg-2: #111111;
+  --brand-line: rgba(250, 204, 21, 0.20);
+  --brand-glow: rgba(250, 204, 21, 0.18);
+  --surface: #131313;
+  --surface-2: #1c1c1c;
+  --surface-border: rgba(120, 113, 108, 0.30);
+  --ink: #f5f5f4;
+  --ink-muted: #a8a29e;
+  --ink-faint: #78716c;
+  color-scheme: dark;
+}
+
+/* ---------- Shared theme primitives ---------- */
+.theme-shell {
+  background: var(--brand-bg);
+  color: var(--ink);
+}
+.theme-shell a { color: inherit; }
+
+.brand-text { color: var(--brand); }
+.brand-text-soft { color: var(--brand-soft); }
+
+.brand-btn {
+  background: var(--brand);
+  color: #0b1220;
+  font-weight: 600;
+  transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.brand-btn:hover { filter: brightness(1.08); }
+
+.brand-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  color: var(--ink);
+}
+.brand-btn-ghost:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--brand-line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--brand-soft);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brand-card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.85rem;
+}
+
+.brand-eyebrow {
+  color: var(--brand);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brand-heading {
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.brand-muted { color: var(--ink-muted); }
+.brand-faint { color: var(--ink-faint); }
+
+/* ---------- HERO MOTIFS ---------- */
+
+/* Broadband : grid + radial glow, suggests ISP coverage density */
+.hero-broadband {
+  background-color: var(--brand-bg);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 85% 0%, rgba(14, 165, 233, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 30%, rgba(56, 189, 248, 0.12), transparent 65%),
+    linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+    linear-gradient(180deg, #050816 0%, #0c1429 100%);
+  background-size: auto, auto, 32px 32px, 32px 32px, auto;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+}
+.hero-broadband-mask {
+  mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+}
+
+/* Storms / Roofers : radar-sweep conic + diagonal lightning-streak */
+.hero-roofers {
+  background-color: var(--brand-bg);
+  background-image:
+    conic-gradient(from 220deg at 80% 15%,
+      rgba(249, 115, 22, 0.22) 0deg,
+      rgba(249, 115, 22, 0.04) 50deg,
+      transparent 120deg,
+      transparent 360deg),
+    radial-gradient(ellipse 70% 60% at 80% 10%, rgba(251, 146, 60, 0.18), transparent 65%),
+    linear-gradient(120deg, transparent 30%, rgba(249, 115, 22, 0.08) 50%, transparent 70%),
+    linear-gradient(180deg, #160a04 0%, #0b0a0a 100%);
+}
+
+/* Hail-Leads : ice-blue map dots */
+.hero-hail {
+  background-color: var(--brand-bg);
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(125, 211, 252, 0.20), transparent 45%),
+    radial-gradient(circle at 78% 70%, rgba(186, 230, 253, 0.10), transparent 50%),
+    radial-gradient(circle 1px at 25% 35%, rgba(186, 230, 253, 0.55) 1px, transparent 2px),
+    radial-gradient(circle 1px at 65% 25%, rgba(186, 230, 253, 0.45) 1px, transparent 2px),
+    radial-gradient(circle 1px at 40% 70%, rgba(186, 230, 253, 0.45) 1px, transparent 2px),
+    radial-gradient(circle 1px at 80% 55%, rgba(186, 230, 253, 0.50) 1px, transparent 2px),
+    radial-gradient(circle 1px at 15% 80%, rgba(186, 230, 253, 0.40) 1px, transparent 2px),
+    radial-gradient(circle 1px at 55% 50%, rgba(186, 230, 253, 0.45) 1px, transparent 2px),
+    linear-gradient(180deg, #0a1626 0%, #0f2238 100%);
+  background-size: auto, auto, 240px 240px, 320px 320px, 280px 280px, 260px 260px, 300px 300px, 220px 220px, auto;
+}
+
+/* Dumpster-Leads : construction-yellow on black */
+.hero-dumpster {
+  background-color: var(--brand-bg);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(250, 204, 21, 0.16), transparent 65%),
+    linear-gradient(180deg, #0b0b0b 0%, #050505 100%);
+}
+/* Construction-tape stripe used as edge accents (header/footer of hero) */
+.tape-stripe {
+  height: 14px;
+  background: repeating-linear-gradient(
+    135deg,
+    #facc15 0 28px,
+    #000 28px 56px
+  );
+}
+.tape-stripe-thin {
+  height: 6px;
+  background: repeating-linear-gradient(
+    135deg,
+    #facc15 0 18px,
+    #000 18px 36px
+  );
+}
+
+/* ---------- Type accents ---------- */
+.font-display-stencil {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- KPI strip themed ---------- */
+.themed-kpi {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+  border-block: 1px solid var(--surface-border);
+}
+.themed-kpi-value { color: var(--ink); }
+.themed-kpi-label { color: var(--ink-muted); }
+.themed-divider { border-color: var(--surface-border) !important; }
+
+/* ---------- Form / lookup widgets on dark themes ---------- */
+.theme-shell .lookup-on-dark input,
+.theme-shell .lookup-on-dark select,
+.theme-shell .lookup-on-dark textarea {
+  background-color: var(--surface);
+  border-color: var(--surface-border);
+  color: var(--ink);
+}
+.theme-shell .lookup-on-dark input::placeholder,
+.theme-shell .lookup-on-dark textarea::placeholder {
+  color: var(--ink-faint);
+}
