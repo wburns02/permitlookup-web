@@ -29,7 +29,8 @@ const BROADBAND_NAV_LINKS: NavLink[] = [
   { href: "/broadband", label: "Home" },
   { href: "/broadband#try-it", label: "Try it" },
   { href: "/broadband#docs", label: "Docs" },
-  { href: "/broadband#pricing", label: "Pricing" },
+  { href: "/broadband/pricing", label: "Pricing" },
+  { href: "/broadband/portal", label: "Portal" },
 ];
 
 export function SiteHeader({
