@@ -12,6 +12,7 @@ export type SiteHeaderVariant =
   | "dumpster"
   | "broadband"
   | "roofers"
+  | "roofers-os"
   | "hail";
 
 const DEFAULT_NAV_LINKS: NavLink[] = [
@@ -43,6 +44,14 @@ const ROOFERS_NAV_LINKS: NavLink[] = [
   { href: "/roofers#try-it", label: "Try it" },
   { href: "/roofers#docs", label: "Docs" },
   { href: "/roofers#pricing", label: "Pricing" },
+];
+
+const ROOFERS_OS_NAV_LINKS: NavLink[] = [
+  { href: "/roofers-os", label: "Home" },
+  { href: "/roofers-os#features", label: "Features" },
+  { href: "/roofers-os#integrations", label: "Data layer" },
+  { href: "/roofers-os#pricing", label: "Pricing" },
+  { href: "/roofers-os#compare", label: "Compare" },
 ];
 
 const HAIL_NAV_LINKS: NavLink[] = [
@@ -105,6 +114,19 @@ const TOKENS: Record<SiteHeaderVariant, Tokens> = {
     mobileSheet: "border-t border-orange-500/20 bg-[#0b0a0a]",
     mobileLink: "text-stone-200 hover:bg-orange-500/10",
   },
+  "roofers-os": {
+    shell: "border-b border-transparent bg-transparent",
+    shellScrolled:
+      "border-b border-[#c87b3e]/25 bg-[#0d1117]/90 backdrop-blur supports-[backdrop-filter]:bg-[#0d1117]/75",
+    navLink: "text-slate-300",
+    navLinkHover: "hover:text-[#e0975a]",
+    ctaBg:
+      "bg-[#c87b3e] hover:bg-[#e0975a] text-[#1a0f06] font-bold shadow-[0_0_28px_-8px_rgba(200,123,62,0.6)]",
+    brandLeft: "text-[#e0975a]",
+    brandRight: "text-slate-100",
+    mobileSheet: "border-t border-[#c87b3e]/25 bg-[#0d1117]",
+    mobileLink: "text-slate-200 hover:bg-[#c87b3e]/10",
+  },
   dumpster: {
     shell: "border-b border-transparent bg-transparent",
     shellScrolled:
@@ -152,43 +174,52 @@ export function SiteHeader({
   const isDumpster = variant === "dumpster";
   const isBroadband = variant === "broadband";
   const isRoofers = variant === "roofers";
+  const isRoofersOs = variant === "roofers-os";
   const isHail = variant === "hail";
   const navLinks = isHail
     ? HAIL_NAV_LINKS
-    : isRoofers
-      ? ROOFERS_NAV_LINKS
-      : isBroadband
-        ? BROADBAND_NAV_LINKS
-        : isDumpster
-          ? DUMPSTER_NAV_LINKS
-          : DEFAULT_NAV_LINKS;
+    : isRoofersOs
+      ? ROOFERS_OS_NAV_LINKS
+      : isRoofers
+        ? ROOFERS_NAV_LINKS
+        : isBroadband
+          ? BROADBAND_NAV_LINKS
+          : isDumpster
+            ? DUMPSTER_NAV_LINKS
+            : DEFAULT_NAV_LINKS;
   const logoHref = isHail
     ? "/hail-leads"
-    : isRoofers
-      ? "/roofers"
-      : isBroadband
-        ? "/broadband"
-        : isDumpster
-          ? "/dumpster-leads"
-          : "/";
+    : isRoofersOs
+      ? "/roofers-os"
+      : isRoofers
+        ? "/roofers"
+        : isBroadband
+          ? "/broadband"
+          : isDumpster
+            ? "/dumpster-leads"
+            : "/";
   const ctaHref = isHail
     ? "mailto:contact@permitlookup.com?subject=Hail%20Leads%20access"
-    : isRoofers
-      ? "/roofers#try-it"
-      : isBroadband
-        ? "/broadband#try-it"
-        : isDumpster
-          ? "mailto:contact@permitlookup.com?subject=Dumpster%20Leads"
-          : "/hail-leads";
+    : isRoofersOs
+      ? "mailto:will@ecbtx.com?subject=RoofCRM%20demo"
+      : isRoofers
+        ? "/roofers#try-it"
+        : isBroadband
+          ? "/broadband#try-it"
+          : isDumpster
+            ? "mailto:contact@permitlookup.com?subject=Dumpster%20Leads"
+            : "/hail-leads";
   const ctaLabel = isDumpster
     ? "Get Leads"
-    : isRoofers
-      ? "Try Dispatch"
-      : isBroadband
-        ? "Try the API"
-        : isHail
-          ? "Request Access"
-          : "See Demo";
+    : isRoofersOs
+      ? "Book a demo"
+      : isRoofers
+        ? "Try Dispatch"
+        : isBroadband
+          ? "Try the API"
+          : isHail
+            ? "Request Access"
+            : "See Demo";
 
   const t = TOKENS[variant];
   const brandWordmark = isDumpster ? (
@@ -206,6 +237,14 @@ export function SiteHeader({
     >
       <span className={t.brandLeft}>Storm</span>
       <span className={t.brandRight}>Strike</span>
+    </Link>
+  ) : isRoofersOs ? (
+    <Link
+      href={logoHref}
+      className="flex items-baseline gap-1.5 text-lg font-bold tracking-tight"
+    >
+      <span className={t.brandLeft}>Roof</span>
+      <span className={t.brandRight}>CRM</span>
     </Link>
   ) : isBroadband ? (
     <Link

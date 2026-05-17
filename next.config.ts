@@ -33,8 +33,8 @@ const nextConfig: NextConfig = {
             value: "roofers.ecbtx.com",
           },
         ],
-        destination: "/roofers",
-        permanent: true,
+        destination: "/roofers-os",
+        permanent: false,
       },
       {
         source: "/",

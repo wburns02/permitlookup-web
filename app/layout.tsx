@@ -37,8 +37,8 @@ async function resolveHeaderVariant(): Promise<SiteHeaderVariant> {
   if (host.startsWith("dumpster.")) return "dumpster";
   if (host.startsWith("broadband.")) return "broadband";
   if (host.startsWith("hail.")) return "hail";
-  if (host.startsWith("storms.") || host.startsWith("roofers."))
-    return "roofers";
+  if (host.startsWith("roofers.")) return "roofers-os";
+  if (host.startsWith("storms.")) return "roofers";
   return "default";
 }
 
@@ -54,6 +54,7 @@ export default async function RootLayout({
   const theme: string | undefined =
     variant === "broadband" ? "broadband"
     : variant === "roofers" ? "roofers"
+    : variant === "roofers-os" ? "roofers-os"
     : variant === "hail" ? "hail"
     : variant === "dumpster" ? "dumpster"
     : undefined;

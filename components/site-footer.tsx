@@ -32,6 +32,13 @@ const TOKENS: Record<SiteHeaderVariant, FooterTokens> = {
     link: "text-stone-300",
     linkHover: "hover:text-orange-300",
   },
+  "roofers-os": {
+    shell: "border-t border-[#c87b3e]/25 bg-[#0d1117] text-slate-400",
+    brand: "text-[#e0975a]",
+    divider: "text-slate-700",
+    link: "text-slate-300",
+    linkHover: "hover:text-[#e0975a]",
+  },
   dumpster: {
     shell: "border-t-2 border-yellow-400/40 bg-black text-stone-400",
     brand: "text-yellow-400 font-display-stencil",
@@ -62,6 +69,10 @@ export function SiteFooter({
     ) : variant === "roofers" ? (
       <>
         <span className={t.brand}>Storm</span>Strike
+      </>
+    ) : variant === "roofers-os" ? (
+      <>
+        <span className={t.brand}>Roof</span>CRM
       </>
     ) : variant === "dumpster" ? (
       <span className={t.brand}>DUMPSTER LEADS</span>

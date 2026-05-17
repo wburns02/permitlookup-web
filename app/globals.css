@@ -173,6 +173,25 @@
   color-scheme: dark;
 }
 
+/* ----- ROOFERS-OS / RoofCRM : slate-charcoal + electric copper ----- */
+[data-theme="roofers-os"] {
+  --brand: #c87b3e;          /* copper */
+  --brand-soft: #e0975a;     /* lighter copper */
+  --brand-deep: #8a4a1d;     /* deep bronze */
+  --brand-ink: #f4e3d1;      /* warm cream */
+  --brand-bg: #0d1117;       /* deep slate-charcoal */
+  --brand-bg-2: #161c26;
+  --brand-line: rgba(200, 123, 62, 0.22);
+  --brand-glow: rgba(200, 123, 62, 0.18);
+  --surface: #141a23;
+  --surface-2: #1c232e;
+  --surface-border: rgba(148, 163, 184, 0.12);
+  --ink: #e6edf3;
+  --ink-muted: #9aa7b8;
+  --ink-faint: #6b7888;
+  color-scheme: dark;
+}
+
 /* ----- HAIL-LEADS : ice-blue + silver on darker slate ----- */
 [data-theme="hail"] {
   --brand: #7dd3fc;          /* sky-300 */
@@ -307,6 +326,64 @@
     radial-gradient(ellipse 70% 60% at 80% 10%, rgba(251, 146, 60, 0.18), transparent 65%),
     linear-gradient(120deg, transparent 30%, rgba(249, 115, 22, 0.08) 50%, transparent 70%),
     linear-gradient(180deg, #160a04 0%, #0b0a0a 100%);
+}
+
+/* Roofers-OS / RoofCRM : architectural blueprint grid + copper warmth */
+.hero-roofers-os {
+  background-color: var(--brand-bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 85% 10%, rgba(200, 123, 62, 0.18), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 10% 85%, rgba(125, 167, 217, 0.08), transparent 70%),
+    linear-gradient(rgba(125, 167, 217, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 167, 217, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(125, 167, 217, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 167, 217, 0.09) 1px, transparent 1px),
+    linear-gradient(180deg, #0d1117 0%, #161c26 100%);
+  background-size: auto, auto, 24px 24px, 24px 24px, 120px 120px, 120px 120px, auto;
+}
+
+/* Copper edge accent for hero CTAs in roofers-os */
+.copper-cta {
+  background: linear-gradient(180deg, #c87b3e 0%, #a85f28 100%);
+  color: #1a0f06;
+  font-weight: 700;
+  border: 1px solid #e0975a;
+  box-shadow:
+    0 0 0 1px rgba(200, 123, 62, 0.4),
+    0 8px 28px -10px rgba(200, 123, 62, 0.6),
+    inset 0 1px 0 rgba(255, 220, 180, 0.4);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.copper-cta:hover {
+  filter: brightness(1.08);
+}
+
+.copper-border {
+  border: 2px solid var(--brand);
+  background: rgba(200, 123, 62, 0.06);
+  color: var(--brand-ink);
+}
+.copper-border:hover {
+  border-color: var(--brand-soft);
+  background: rgba(200, 123, 62, 0.12);
+}
+
+/* Subtle blueprint-frame decoration */
+.blueprint-frame {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  position: relative;
+}
+.blueprint-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(125, 167, 217, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 167, 217, 0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.5;
 }
 
 /* Hail-Leads : ice-blue map dots */
