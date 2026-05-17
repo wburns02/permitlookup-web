@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 type NavLink = { href: string; label: string };
 
-export type SiteHeaderVariant = "default" | "dumpster";
+export type SiteHeaderVariant = "default" | "dumpster" | "broadband";
 
 const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
@@ -23,6 +23,13 @@ const DUMPSTER_NAV_LINKS: NavLink[] = [
     label: "Pricing",
   },
   { href: "mailto:contact@permitlookup.com", label: "Contact" },
+];
+
+const BROADBAND_NAV_LINKS: NavLink[] = [
+  { href: "/broadband", label: "Home" },
+  { href: "/broadband#try-it", label: "Try it" },
+  { href: "/broadband#docs", label: "Docs" },
+  { href: "/broadband#pricing", label: "Pricing" },
 ];
 
 export function SiteHeader({
@@ -41,9 +48,26 @@ export function SiteHeader({
   }, []);
 
   const isDumpster = variant === "dumpster";
-  const navLinks = isDumpster ? DUMPSTER_NAV_LINKS : DEFAULT_NAV_LINKS;
-  const logoHref = isDumpster ? "/dumpster-leads" : "/";
-  const ctaHref = isDumpster ? "/dumpster-leads" : "/hail-leads";
+  const isBroadband = variant === "broadband";
+  const navLinks = isBroadband
+    ? BROADBAND_NAV_LINKS
+    : isDumpster
+      ? DUMPSTER_NAV_LINKS
+      : DEFAULT_NAV_LINKS;
+  const logoHref = isBroadband
+    ? "/broadband"
+    : isDumpster
+      ? "/dumpster-leads"
+      : "/";
+  const ctaHref = isBroadband
+    ? "/broadband#try-it"
+    : isDumpster
+      ? "/dumpster-leads"
+      : "/hail-leads";
+  const ctaLabel = isBroadband ? "Try the API" : "See Demo";
+  const ctaClass = isBroadband
+    ? "bg-emerald-600 hover:bg-emerald-500"
+    : "bg-indigo-600 hover:bg-indigo-500";
 
   return (
     <header
@@ -75,9 +99,12 @@ export function SiteHeader({
           ))}
           <Link
             href={ctaHref}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-500"
+            className={cn(
+              "rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm transition",
+              ctaClass,
+            )}
           >
-            See Demo
+            {ctaLabel}
           </Link>
         </nav>
 
@@ -107,9 +134,12 @@ export function SiteHeader({
             <Link
               href={ctaHref}
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-md bg-indigo-600 px-3 py-3 text-center text-base font-medium text-white hover:bg-indigo-500"
+              className={cn(
+                "mt-2 rounded-md px-3 py-3 text-center text-base font-medium text-white",
+                ctaClass,
+              )}
             >
-              See Demo
+              {ctaLabel}
             </Link>
           </nav>
         </div>
