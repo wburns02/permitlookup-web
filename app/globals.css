@@ -379,3 +379,102 @@
 .theme-shell .lookup-on-dark textarea::placeholder {
   color: var(--ink-faint);
 }
+
+/* ---------- Hail dashboard: re-skin shared light-mode chrome on the dark hail shell ----- */
+[data-theme="hail"] .border-indigo-200,
+[data-theme="dumpster"] .border-indigo-200 {
+  border-color: var(--surface-border) !important;
+}
+[data-theme="hail"] .bg-indigo-50,
+[data-theme="dumpster"] .bg-indigo-50 {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+[data-theme="hail"] .text-indigo-700,
+[data-theme="dumpster"] .text-indigo-700 {
+  color: var(--brand-soft) !important;
+}
+[data-theme="hail"] .text-indigo-600,
+[data-theme="dumpster"] .text-indigo-600 {
+  color: var(--brand) !important;
+}
+[data-theme="hail"] .text-indigo-500,
+[data-theme="dumpster"] .text-indigo-500 {
+  color: var(--brand) !important;
+}
+[data-theme="hail"] .bg-indigo-600,
+[data-theme="dumpster"] .bg-indigo-600 {
+  background-color: var(--brand) !important;
+  color: #0b1220 !important;
+}
+[data-theme="hail"] .hover\:bg-indigo-500:hover,
+[data-theme="dumpster"] .hover\:bg-indigo-500:hover {
+  background-color: var(--brand-soft) !important;
+}
+[data-theme="hail"] .text-slate-900,
+[data-theme="dumpster"] .text-slate-900 {
+  color: var(--ink) !important;
+}
+[data-theme="hail"] .text-slate-700,
+[data-theme="dumpster"] .text-slate-700 {
+  color: var(--ink) !important;
+}
+[data-theme="hail"] .text-slate-600,
+[data-theme="dumpster"] .text-slate-600 {
+  color: var(--ink-muted) !important;
+}
+[data-theme="hail"] .text-slate-500,
+[data-theme="dumpster"] .text-slate-500 {
+  color: var(--ink-muted) !important;
+}
+[data-theme="hail"] .text-slate-400,
+[data-theme="dumpster"] .text-slate-400 {
+  color: var(--ink-faint) !important;
+}
+[data-theme="hail"] .bg-white,
+[data-theme="dumpster"] .bg-white {
+  background-color: var(--surface) !important;
+}
+[data-theme="hail"] .bg-slate-50,
+[data-theme="dumpster"] .bg-slate-50 {
+  background-color: var(--surface-2) !important;
+}
+[data-theme="hail"] .border-slate-200,
+[data-theme="dumpster"] .border-slate-200 {
+  border-color: var(--surface-border) !important;
+}
+[data-theme="hail"] .border-slate-300,
+[data-theme="dumpster"] .border-slate-300 {
+  border-color: var(--surface-border) !important;
+}
+[data-theme="hail"] .divide-slate-200 > * + *,
+[data-theme="dumpster"] .divide-slate-200 > * + * {
+  border-color: var(--surface-border) !important;
+}
+[data-theme="hail"] table tbody tr:hover,
+[data-theme="dumpster"] table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* The shared inputs across hail/dumpster dashboards should match dark surface */
+[data-theme="hail"] input,
+[data-theme="hail"] select,
+[data-theme="hail"] textarea,
+[data-theme="dumpster"] input,
+[data-theme="dumpster"] select,
+[data-theme="dumpster"] textarea {
+  background-color: var(--surface) !important;
+  color: var(--ink) !important;
+  border-color: var(--surface-border) !important;
+}
+[data-theme="hail"] input::placeholder,
+[data-theme="hail"] textarea::placeholder,
+[data-theme="dumpster"] input::placeholder,
+[data-theme="dumpster"] textarea::placeholder {
+  color: var(--ink-faint) !important;
+}
+
+/* Dumpster: stencil-style major headings */
+[data-theme="dumpster"] h1.brand-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

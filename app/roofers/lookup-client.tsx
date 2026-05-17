@@ -69,9 +69,9 @@ const US_STATES = [
 ];
 
 function scoreBadgeClass(score: number): string {
-  if (score >= 90) return "bg-emerald-100 text-emerald-800 border-emerald-200";
-  if (score >= 70) return "bg-amber-100 text-amber-800 border-amber-200";
-  return "bg-zinc-100 text-zinc-700 border-zinc-200";
+  if (score >= 90) return "bg-orange-500/20 text-orange-200 border-orange-400/40";
+  if (score >= 70) return "bg-amber-500/15 text-amber-200 border-amber-400/30";
+  return "bg-stone-700/40 text-stone-300 border-stone-600/40";
 }
 
 function scoreLabel(score: number): string {
@@ -150,19 +150,19 @@ export function StormStrikeLookup() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="rounded-2xl border border-orange-500/15 bg-[#14100d] shadow-[0_0_40px_-16px_rgba(249,115,22,0.4)]">
       <form
         onSubmit={onSubmit}
-        className="grid gap-6 border-b border-slate-200 p-6 md:grid-cols-12 md:items-end"
+        className="grid gap-6 border-b border-orange-500/15 p-6 md:grid-cols-12 md:items-end"
       >
         <div className="md:col-span-3">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-stone-400">
             State
           </label>
           <select
             value={state}
             onChange={(e) => setState(e.target.value)}
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="mt-2 block w-full rounded-lg border border-stone-700 bg-[#0b0604] px-3 py-2.5 text-sm text-stone-100 shadow-sm focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
           >
             {US_STATES.map((s) => (
               <option key={s} value={s}>
@@ -173,10 +173,10 @@ export function StormStrikeLookup() {
         </div>
         <div className="md:col-span-4">
           <div className="flex items-baseline justify-between">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-400">
               Days back
             </label>
-            <span className="font-mono text-xs text-slate-600">
+            <span className="font-mono text-xs text-stone-300">
               {daysBack}d
             </span>
           </div>
@@ -186,15 +186,15 @@ export function StormStrikeLookup() {
             max={30}
             value={daysBack}
             onChange={(e) => setDaysBack(Number(e.target.value))}
-            className="mt-3 block w-full accent-emerald-600"
+            className="mt-3 block w-full accent-orange-500"
           />
         </div>
         <div className="md:col-span-3">
           <div className="flex items-baseline justify-between">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-400">
               Min score
             </label>
-            <span className="font-mono text-xs text-slate-600">{minScore}</span>
+            <span className="font-mono text-xs text-stone-300">{minScore}</span>
           </div>
           <input
             type="range"
@@ -203,14 +203,14 @@ export function StormStrikeLookup() {
             step={5}
             value={minScore}
             onChange={(e) => setMinScore(Number(e.target.value))}
-            className="mt-3 block w-full accent-emerald-600"
+            className="mt-3 block w-full accent-orange-500"
           />
         </div>
         <div className="md:col-span-2">
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold uppercase tracking-wide text-stone-950 shadow-[0_0_24px_-8px_rgba(249,115,22,0.7)] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <>
@@ -229,12 +229,12 @@ export function StormStrikeLookup() {
 
       <div className="p-6 md:p-8">
         {error && (
-          <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
             <div>
               <div className="font-medium">Storm scan failed</div>
-              <div className="mt-0.5 text-amber-800">{error}</div>
-              <div className="mt-2 text-xs text-amber-700">
+              <div className="mt-0.5 text-amber-200">{error}</div>
+              <div className="mt-2 text-xs text-amber-200/70">
                 The recent-leads endpoint joins NOAA storm events, parcel
                 geometry, and 35M mortgage records. Slow queries can time
                 out. Try a smaller days-back window.
@@ -244,7 +244,7 @@ export function StormStrikeLookup() {
         )}
 
         {!error && !result && !loading && (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-500">
+          <div className="rounded-lg border border-dashed border-stone-700 bg-[#0b0604] p-8 text-center text-sm text-stone-400">
             Pick a state, dial in your window, and we&apos;ll surface the
             highest-scoring rooftops from recent hail strikes.
           </div>
@@ -261,16 +261,16 @@ function ResultPanel({ data }: { data: RecentResponse }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-b border-slate-200 pb-5">
-        <div className="flex items-center gap-2 text-sm text-slate-500">
-          <CloudHail className="h-4 w-4 text-emerald-600" />
-          <span className="font-mono text-slate-900">
+      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-b border-orange-500/15 pb-5">
+        <div className="flex items-center gap-2 text-sm text-stone-400">
+          <CloudHail className="h-4 w-4 text-orange-400" />
+          <span className="font-mono text-stone-100">
             {data.state} &middot; last {data.days_back} day
             {data.days_back === 1 ? "" : "s"} &middot; score &ge;{" "}
             {data.min_score}
           </span>
         </div>
-        <div className="text-xs uppercase tracking-wide text-slate-400">
+        <div className="text-xs uppercase tracking-wider text-stone-500">
           {data.event_count} storm event{data.event_count === 1 ? "" : "s"}{" "}
           &middot; {data.count} ranked propert
           {data.count === 1 ? "y" : "ies"}
@@ -278,8 +278,8 @@ function ResultPanel({ data }: { data: RecentResponse }) {
       </div>
 
       {!hasLeads ? (
-        <div className="mt-6 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-sm text-slate-600">
-          <p className="font-medium text-slate-700">
+        <div className="mt-6 rounded-lg border border-dashed border-stone-700 bg-[#0b0604] p-8 text-sm text-stone-300">
+          <p className="font-medium text-stone-100">
             No qualifying storms in this window.
           </p>
           <p className="mt-2">
@@ -317,15 +317,15 @@ function LeadCard({ lead }: { lead: RooferLeadItem }) {
   const score = Math.round(lead.composite_score);
 
   return (
-    <li className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+    <li className="flex flex-col rounded-xl border border-orange-500/15 bg-[#14100d] p-5 shadow-sm transition hover:border-orange-400/40 hover:shadow-[0_0_24px_-8px_rgba(249,115,22,0.45)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-            <Home className="h-4 w-4 shrink-0 text-emerald-600" />
+          <div className="flex items-center gap-2 text-sm font-semibold text-stone-100">
+            <Home className="h-4 w-4 shrink-0 text-orange-400" />
             <span className="truncate">{formatAddress(lead)}</span>
           </div>
           {lead.county && (
-            <div className="mt-1 text-xs text-slate-500">
+            <div className="mt-1 text-xs text-stone-400">
               {lead.county} County
             </div>
           )}
@@ -344,36 +344,36 @@ function LeadCard({ lead }: { lead: RooferLeadItem }) {
 
       <div className="mt-4 flex flex-wrap gap-2 text-xs">
         {mag != null && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
-            <CloudHail className="h-3 w-3 text-slate-500" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-stone-700/40 px-2.5 py-1 font-medium text-stone-200">
+            <CloudHail className="h-3 w-3 text-stone-400" />
             {mag.toFixed(2)}&Prime; hail
           </span>
         )}
         {distance != null && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
-            <Target className="h-3 w-3 text-slate-500" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-stone-700/40 px-2.5 py-1 font-medium text-stone-200">
+            <Target className="h-3 w-3 text-stone-400" />
             {distance.toFixed(1)} mi from centroid
           </span>
         )}
         {days != null && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
-            <Calendar className="h-3 w-3 text-slate-500" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-stone-700/40 px-2.5 py-1 font-medium text-stone-200">
+            <Calendar className="h-3 w-3 text-stone-400" />
             {days}d ago
           </span>
         )}
         {lead.year_built != null && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
+          <span className="inline-flex items-center gap-1 rounded-full bg-stone-700/40 px-2.5 py-1 font-medium text-stone-200">
             built {lead.year_built}
           </span>
         )}
         {lead.has_active_mortgage && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
+          <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2.5 py-1 font-medium text-orange-200 ring-1 ring-orange-400/30">
             mortgage active
           </span>
         )}
         {lead.recent_roof_permit_date && (
           <span
-            className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 font-medium text-amber-700"
+            className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 font-medium text-amber-200"
             title="A recent roof permit penalises the score"
           >
             recent roof permit
@@ -381,7 +381,7 @@ function LeadCard({ lead }: { lead: RooferLeadItem }) {
         )}
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+      <div className="mt-4 flex items-center justify-between border-t border-stone-800 pt-3 text-xs text-stone-400">
         <span className="font-mono">
           event #{lead.storm_event_id}
           {lead.storm_date && (
@@ -395,7 +395,7 @@ function LeadCard({ lead }: { lead: RooferLeadItem }) {
           href={googleMapsUrl(lead)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-medium text-emerald-600 transition hover:text-emerald-500"
+          className="inline-flex items-center gap-1 font-medium text-orange-300 transition hover:text-orange-200"
         >
           <MapPin className="h-3.5 w-3.5" />
           Map

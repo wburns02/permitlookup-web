@@ -94,6 +94,60 @@ const useCases = [
   },
 ];
 
+type ScoreSignal = {
+  icon: React.ReactNode;
+  label: string;
+  weight: React.ReactNode;
+  body: React.ReactNode;
+};
+
+const scoreSignals: ScoreSignal[] = [
+  {
+    icon: <CloudHail className="h-4 w-4" />,
+    label: "Storm severity",
+    weight: <>0&ndash;30</>,
+    body: (
+      <>
+        Normalised from NOAA hail size in inches. 2.75&Prime; baseballs cap the
+        score.
+      </>
+    ),
+  },
+  {
+    icon: <Database className="h-4 w-4" />,
+    label: "Home age",
+    weight: <>0&ndash;25</>,
+    body: (
+      <>
+        Older homes score higher &mdash; more likely to qualify for a full
+        replacement.
+      </>
+    ),
+  },
+  {
+    icon: <ShieldCheck className="h-4 w-4" />,
+    label: "Mortgage active",
+    weight: <>0&ndash;20</>,
+    body: (
+      <>
+        Active mortgage means insurance + escrow are already in place. Big
+        claim signal.
+      </>
+    ),
+  },
+  {
+    icon: <FileText className="h-4 w-4" />,
+    label: "Recent roof permit penalty",
+    weight: <>0&ndash;&minus;20</>,
+    body: (
+      <>
+        Suppress rooftops already replaced. We pull permits weekly and zero
+        out the recently-roofed.
+      </>
+    ),
+  },
+];
+
 const endpoints = [
   {
     title: "Recent strikes by state",
@@ -167,55 +221,50 @@ event_id=1098221&days_after=120&radius_miles=20&min_score=50" \\
 
 export default function RoofersPage() {
   return (
-    <>
+    <div data-theme="roofers" className="theme-shell">
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-to-b from-emerald-50 via-slate-50 to-slate-50"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 top-12 -z-10 h-72 w-72 rounded-full bg-emerald-200/50 blur-3xl"
-        />
+      <section className="relative overflow-hidden hero-roofers">
         <div className="mx-auto grid max-w-6xl gap-12 px-6 pb-20 pt-20 md:grid-cols-12 md:pt-28">
           <div className="md:col-span-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-medium uppercase tracking-wide text-emerald-700">
-              <CloudHail className="h-3.5 w-3.5" />
-              NOAA &times; 35M mortgages &times; 297M distress signals
+            <span className="brand-pill">
+              <Radar className="h-3.5 w-3.5" />
+              NOAA &times; 35M mortgages &times; 297M signals
             </span>
-            <h1 className="mt-6 text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-slate-900 md:text-6xl">
+            <h1 className="brand-heading mt-6 text-balance text-5xl font-bold uppercase leading-[1.02] tracking-tight md:text-6xl">
               Storm Strike
               <br className="hidden sm:block" />
-              <span className="text-emerald-600"> Dispatch.</span>
+              <span className="brand-text"> Dispatch.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed brand-muted">
               Within 48 hours of a hail event, get ranked rooftop addresses
               ready for outreach. 15K TX hail events. 35M mortgage records.
-              297M code-violation distress signals. One API call.
+              297M code-violation distress signals.{" "}
+              <span className="font-semibold brand-text-soft">
+                One API call.
+              </span>
             </p>
             <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               <a
                 href="#try-it"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3.5 text-base font-medium text-white shadow-sm transition hover:bg-emerald-500"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3.5 text-base font-semibold uppercase tracking-wide text-stone-950 shadow-[0_0_30px_-8px_rgba(249,115,22,0.7)] transition hover:bg-orange-400"
               >
-                Try recent strikes <ArrowRight className="h-4 w-4" />
+                Strike now <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href="#docs"
-                className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-base font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-lg border border-orange-500/30 bg-orange-500/5 px-6 py-3.5 text-base font-medium text-orange-200 transition hover:border-orange-400 hover:bg-orange-500/10"
               >
                 See the docs
               </a>
             </div>
           </div>
           <div className="hidden md:col-span-4 md:block">
-            <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+            <div className="relative rounded-2xl border border-orange-500/25 bg-[#160a04]/80 p-6 shadow-[0_0_40px_-12px_rgba(249,115,22,0.45)] backdrop-blur">
+              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-stone-400">
+                <span className="inline-block h-2 w-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.85)]" />
                 /v1/roofer-leads/recent
               </div>
-              <pre className="mt-4 overflow-x-auto rounded-md bg-slate-900 p-4 font-mono text-[11px] leading-relaxed text-slate-100">
+              <pre className="mt-4 overflow-x-auto rounded-md bg-[#0b0604] p-4 font-mono text-[11px] leading-relaxed text-stone-200 ring-1 ring-orange-500/15">
 {`{
   "state": "TX",
   "event_count": 7,
@@ -236,14 +285,16 @@ export default function RoofersPage() {
       </section>
 
       {/* KPI STRIP */}
-      <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 divide-slate-200 md:grid-cols-4 md:divide-x">
+      <section className="themed-kpi">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-4 md:divide-x md:divide-orange-500/10">
           {kpis.map((s) => (
             <div key={s.label} className="px-6 py-10">
-              <div className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+              <div className="text-3xl font-bold tracking-tight themed-kpi-value md:text-4xl">
                 {s.value}
               </div>
-              <div className="mt-1 text-sm text-slate-500">{s.label}</div>
+              <div className="mt-1 text-xs uppercase tracking-wider themed-kpi-label">
+                {s.label}
+              </div>
             </div>
           ))}
         </div>
@@ -252,31 +303,27 @@ export default function RoofersPage() {
       {/* LIVE LOOKUP */}
       <section id="try-it" className="mx-auto max-w-6xl px-6 py-20 md:py-28">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
-            Live recent strikes
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+          <p className="brand-eyebrow">Live recent strikes</p>
+          <h2 className="brand-heading mt-3 text-3xl font-bold tracking-tight md:text-4xl">
             Find storm-strike leads in your state.
           </h2>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 brand-muted">
             Hits the same production endpoint your code would &mdash; no key
             required for this demo widget. Pick a state, dial in your
             recency window, and we&apos;ll surface the top-scoring rooftops.
           </p>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 lookup-on-dark">
           <StormStrikeLookup />
         </div>
       </section>
 
       {/* USE CASES */}
-      <section className="bg-slate-50">
+      <section className="border-y border-orange-500/10 bg-[#0e0805]/70">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
-              Three ways roofers run it
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+            <p className="brand-eyebrow">Three ways roofers run it</p>
+            <h2 className="brand-heading mt-3 text-3xl font-bold tracking-tight md:text-4xl">
               Built for the 48-hour window that matters.
             </h2>
           </div>
@@ -284,15 +331,15 @@ export default function RoofersPage() {
             {useCases.map((u) => (
               <div
                 key={u.title}
-                className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+                className="brand-card p-8 transition hover:border-orange-400/40"
               >
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10 text-orange-400 ring-1 ring-orange-500/25">
                   {u.icon}
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-slate-900">
+                <h3 className="brand-heading mt-5 text-lg font-semibold">
                   {u.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <p className="mt-2 text-sm leading-relaxed brand-muted">
                   {u.body}
                 </p>
               </div>
@@ -305,50 +352,33 @@ export default function RoofersPage() {
       <section className="mx-auto max-w-6xl px-6 py-20 md:py-28">
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
-              How we rank
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+            <p className="brand-eyebrow">How we rank</p>
+            <h2 className="brand-heading mt-3 text-3xl font-bold tracking-tight md:text-4xl">
               Composite score, 0&ndash;100.
             </h2>
-            <p className="mt-4 text-slate-600">
+            <p className="mt-4 brand-muted">
               Every rooftop in the storm footprint gets scored on four
               signals. The result is one number you can rank against and
               dispatch on.
             </p>
             <ul className="mt-8 space-y-4 text-sm">
-              <ScoreRow
-                icon={<CloudHail className="h-4 w-4" />}
-                label="Storm severity"
-                weight="0&ndash;30"
-                body="Normalised from NOAA hail size in inches. 2.75&Prime; baseballs cap the score."
-              />
-              <ScoreRow
-                icon={<Database className="h-4 w-4" />}
-                label="Home age"
-                weight="0&ndash;25"
-                body="Older homes score higher &mdash; more likely to qualify for a full replacement."
-              />
-              <ScoreRow
-                icon={<ShieldCheck className="h-4 w-4" />}
-                label="Mortgage active"
-                weight="0&ndash;20"
-                body="Active mortgage means insurance + escrow are already in place. Big claim signal."
-              />
-              <ScoreRow
-                icon={<FileText className="h-4 w-4" />}
-                label="Recent roof permit penalty"
-                weight="0&ndash;&minus;20"
-                body="Suppress rooftops already replaced. We pull permits weekly and zero out the recently-roofed."
-              />
+              {scoreSignals.map((s) => (
+                <ScoreRow
+                  key={s.label}
+                  icon={s.icon}
+                  label={s.label}
+                  weight={s.weight}
+                  body={s.body}
+                />
+              ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-900 p-6 shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-400">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+          <div className="rounded-2xl border border-orange-500/20 bg-[#0b0604] p-6 shadow-[0_0_40px_-12px_rgba(249,115,22,0.35)]">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-stone-400">
+              <span className="inline-block h-2 w-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.85)]" />
               components example
             </div>
-            <pre className="mt-4 overflow-x-auto rounded-md bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-slate-100">
+            <pre className="mt-4 overflow-x-auto rounded-md bg-[#050302] p-4 font-mono text-[11px] leading-relaxed text-stone-100 ring-1 ring-orange-500/15">
 {`"components": {
   "storm_severity":            22.5,  // 1.75" hail
   "home_age_score":            18.0,  // built 1998
@@ -363,13 +393,11 @@ export default function RoofersPage() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" className="bg-slate-50">
+      <section id="pricing" className="border-y border-orange-500/10 bg-[#0e0805]/70">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
-              Pricing
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+            <p className="brand-eyebrow">Pricing</p>
+            <h2 className="brand-heading mt-3 text-3xl font-bold tracking-tight md:text-4xl">
               Pay per lead, claim a territory, or wire the API.
             </h2>
           </div>
@@ -378,37 +406,35 @@ export default function RoofersPage() {
               <div
                 key={tier.name}
                 className={
-                  "flex flex-col rounded-xl border bg-white p-8 shadow-sm transition " +
+                  "flex flex-col rounded-xl border bg-[#14100d] p-8 shadow-sm transition " +
                   (tier.featured
-                    ? "border-emerald-500 ring-1 ring-emerald-500"
-                    : "border-slate-200")
+                    ? "border-orange-400/60 ring-1 ring-orange-400/40 shadow-[0_0_40px_-12px_rgba(249,115,22,0.5)]"
+                    : "border-stone-700/60")
                 }
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-900">
+                  <h3 className="brand-heading text-lg font-semibold">
                     {tier.name}
                   </h3>
                   {tier.featured && (
-                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                    <span className="rounded-full bg-orange-500/15 px-2.5 py-0.5 text-xs font-medium text-orange-300">
                       Most popular
                     </span>
                   )}
                 </div>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-slate-900">
+                  <span className="text-4xl font-bold tracking-tight text-stone-50">
                     {tier.price}
                   </span>
                   {tier.cadence && (
-                    <span className="text-sm text-slate-500">
-                      {tier.cadence}
-                    </span>
+                    <span className="text-sm brand-faint">{tier.cadence}</span>
                   )}
                 </div>
-                <p className="mt-1 text-sm text-slate-500">{tier.tagline}</p>
-                <ul className="mt-6 space-y-3 text-sm text-slate-600">
+                <p className="mt-1 text-sm brand-muted">{tier.tagline}</p>
+                <ul className="mt-6 space-y-3 text-sm brand-muted">
                   {tier.bullets.map((b) => (
                     <li key={b} className="flex gap-3">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-orange-400" />
                       <span>{b}</span>
                     </li>
                   ))}
@@ -417,10 +443,10 @@ export default function RoofersPage() {
                   <Link
                     href={tier.href}
                     className={
-                      "inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium transition " +
+                      "inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold uppercase tracking-wide transition " +
                       (tier.featured
-                        ? "bg-emerald-600 text-white hover:bg-emerald-500"
-                        : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50")
+                        ? "bg-orange-500 text-stone-950 hover:bg-orange-400"
+                        : "border border-orange-500/30 bg-orange-500/5 text-orange-200 hover:bg-orange-500/10")
                     }
                   >
                     {tier.cta}
@@ -433,16 +459,17 @@ export default function RoofersPage() {
       </section>
 
       {/* DOCS */}
-      <section id="docs" className="bg-slate-900 py-20 text-slate-100 md:py-28">
+      <section
+        id="docs"
+        className="border-t border-orange-500/10 bg-[#08060a] py-20 md:py-28"
+      >
         <div className="mx-auto max-w-6xl px-6">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-400">
-              Endpoints
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+            <p className="brand-eyebrow">Endpoints</p>
+            <h2 className="brand-heading mt-3 text-3xl font-bold tracking-tight md:text-4xl">
               Two GETs. JSON in, JSON out.
             </h2>
-            <p className="mt-3 text-slate-400">
+            <p className="mt-3 brand-muted">
               Both endpoints are live on Railway behind an X-API-Key
               header. Sample curls and response shapes below.
             </p>
@@ -451,36 +478,36 @@ export default function RoofersPage() {
             {endpoints.map((ep) => (
               <article
                 key={ep.path}
-                className="rounded-xl border border-slate-800 bg-slate-800/40 p-6 md:p-8"
+                className="rounded-xl border border-stone-800 bg-[#14100d]/70 p-6 md:p-8"
               >
                 <div className="flex flex-wrap items-baseline gap-3">
-                  <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 font-mono text-xs font-semibold text-emerald-300">
+                  <span className="rounded-md bg-orange-500/15 px-2 py-0.5 font-mono text-xs font-semibold text-orange-300 ring-1 ring-orange-500/30">
                     {ep.method}
                   </span>
-                  <code className="font-mono text-sm text-slate-100">
+                  <code className="font-mono text-sm text-orange-100">
                     {ep.path}
                   </code>
-                  <span className="text-sm font-medium text-slate-300">
+                  <span className="text-sm font-medium text-stone-300">
                     &mdash; {ep.title}
                   </span>
                 </div>
-                <p className="mt-3 max-w-3xl text-sm text-slate-400">
+                <p className="mt-3 max-w-3xl text-sm brand-muted">
                   {ep.blurb}
                 </p>
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   <div>
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <div className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-orange-400">
                       Request
                     </div>
-                    <pre className="overflow-x-auto rounded-md border border-slate-700 bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-slate-200">
+                    <pre className="overflow-x-auto rounded-md border border-stone-800 bg-[#050302] p-4 font-mono text-[11px] leading-relaxed text-stone-200">
                       {ep.curl}
                     </pre>
                   </div>
                   <div>
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <div className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-orange-400">
                       Response
                     </div>
-                    <pre className="overflow-x-auto rounded-md border border-slate-700 bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-slate-200">
+                    <pre className="overflow-x-auto rounded-md border border-stone-800 bg-[#050302] p-4 font-mono text-[11px] leading-relaxed text-stone-200">
                       {ep.response}
                     </pre>
                   </div>
@@ -492,26 +519,26 @@ export default function RoofersPage() {
       </section>
 
       {/* FOOTER NOTE */}
-      <section className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-slate-500">
+      <section className="border-t border-orange-500/10 bg-[#0b0a0a]">
+        <div className="mx-auto max-w-6xl px-6 py-10 text-sm brand-muted">
           Part of the{" "}
           <a
             href="https://portfolio.ecbtx.com"
-            className="text-emerald-600 hover:text-emerald-500"
+            className="text-orange-300 hover:text-orange-200"
           >
             ecbtx.com data portfolio
           </a>
           . See the full lineup at{" "}
           <a
             href="https://portfolio.ecbtx.com"
-            className="text-emerald-600 hover:text-emerald-500"
+            className="text-orange-300 hover:text-orange-200"
           >
             portfolio.ecbtx.com
           </a>
           .
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -524,19 +551,19 @@ function ScoreRow({
   icon: React.ReactNode;
   label: string;
   weight: React.ReactNode;
-  body: string;
+  body: React.ReactNode;
 }) {
   return (
-    <li className="flex items-start gap-4 rounded-lg border border-slate-200 bg-white p-4">
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+    <li className="flex items-start gap-4 rounded-lg border border-orange-500/15 bg-[#14100d] p-4">
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-orange-500/10 text-orange-400 ring-1 ring-orange-500/20">
         {icon}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-sm font-semibold text-slate-900">{label}</span>
-          <span className="font-mono text-xs text-slate-500">{weight}</span>
+          <span className="text-sm font-semibold text-stone-100">{label}</span>
+          <span className="font-mono text-xs brand-faint">{weight}</span>
         </div>
-        <p className="mt-1 text-xs leading-relaxed text-slate-600">{body}</p>
+        <p className="mt-1 text-xs leading-relaxed brand-muted">{body}</p>
       </div>
     </li>
   );

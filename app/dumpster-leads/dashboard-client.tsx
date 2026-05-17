@@ -146,24 +146,25 @@ export function DumpsterLeadsDashboard() {
       <header className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-indigo-700">
+            <span className="brand-pill">
               <MapPin className="h-3.5 w-3.5" />
               Live demo · Baton Rouge
             </span>
             <DumpsterAsOfPill generatedAt={generatedAt} />
           </div>
-          <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Dumpster Leads{" "}
-            <span className="text-slate-400">·</span>{" "}
-            <span className="text-indigo-600">Baton Rouge</span>
+          <h1 className="brand-heading font-display-stencil mt-3 text-balance text-3xl font-bold tracking-wider md:text-5xl">
+            <span className="brand-text">DUMPSTER</span>
+            <span className="text-stone-100"> LEADS</span>
+            <span className="brand-faint"> · </span>
+            <span className="text-stone-200">BATON ROUGE</span>
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">
+          <p className="mt-2 max-w-2xl text-sm brand-muted">
             Construction projects in your service area that probably need a
             roll-off. Refreshed overnight from East Baton Rouge permit data.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+        <div className="flex items-center gap-2 text-xs brand-muted">
+          <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
           Hourly snapshot from MGO permit data
         </div>
       </header>

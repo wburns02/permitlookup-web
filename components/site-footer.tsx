@@ -39,6 +39,13 @@ const TOKENS: Record<SiteHeaderVariant, FooterTokens> = {
     link: "text-stone-300 uppercase tracking-wider text-xs",
     linkHover: "hover:text-yellow-300",
   },
+  hail: {
+    shell: "border-t border-sky-300/20 bg-[#0a1626] text-slate-400",
+    brand: "text-sky-300",
+    divider: "text-slate-700",
+    link: "text-slate-300",
+    linkHover: "hover:text-sky-200",
+  },
 };
 
 export function SiteFooter({
@@ -58,6 +65,10 @@ export function SiteFooter({
       </>
     ) : variant === "dumpster" ? (
       <span className={t.brand}>DUMPSTER LEADS</span>
+    ) : variant === "hail" ? (
+      <>
+        <span className={t.brand}>Hail</span>Leads
+      </>
     ) : (
       <>
         <span className={t.brand}>Permit</span>Lookup

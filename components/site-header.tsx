@@ -11,7 +11,8 @@ export type SiteHeaderVariant =
   | "default"
   | "dumpster"
   | "broadband"
-  | "roofers";
+  | "roofers"
+  | "hail";
 
 const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
@@ -42,6 +43,15 @@ const ROOFERS_NAV_LINKS: NavLink[] = [
   { href: "/roofers#try-it", label: "Try it" },
   { href: "/roofers#docs", label: "Docs" },
   { href: "/roofers#pricing", label: "Pricing" },
+];
+
+const HAIL_NAV_LINKS: NavLink[] = [
+  { href: "/hail-leads", label: "Dashboard" },
+  {
+    href: "mailto:contact@permitlookup.com?subject=Hail%20Leads%20pricing",
+    label: "Pricing",
+  },
+  { href: "mailto:contact@permitlookup.com", label: "Contact" },
 ];
 
 // Per-variant visual tokens — keeps the header coherent with each product's
@@ -109,6 +119,19 @@ const TOKENS: Record<SiteHeaderVariant, Tokens> = {
     mobileLink:
       "text-stone-200 uppercase tracking-wider text-sm hover:bg-yellow-400/10",
   },
+  hail: {
+    shell: "border-b border-transparent bg-transparent",
+    shellScrolled:
+      "border-b border-sky-300/20 bg-[#0a1626]/85 backdrop-blur supports-[backdrop-filter]:bg-[#0a1626]/70",
+    navLink: "text-slate-300",
+    navLinkHover: "hover:text-sky-200",
+    ctaBg:
+      "bg-sky-300 hover:bg-sky-200 text-slate-950 font-semibold shadow-[0_0_24px_-8px_rgba(125,211,252,0.65)]",
+    brandLeft: "text-sky-300",
+    brandRight: "text-slate-100",
+    mobileSheet: "border-t border-sky-300/20 bg-[#0a1626]",
+    mobileLink: "text-slate-200 hover:bg-sky-300/10",
+  },
 };
 
 export function SiteHeader({
@@ -129,34 +152,43 @@ export function SiteHeader({
   const isDumpster = variant === "dumpster";
   const isBroadband = variant === "broadband";
   const isRoofers = variant === "roofers";
-  const navLinks = isRoofers
-    ? ROOFERS_NAV_LINKS
-    : isBroadband
-      ? BROADBAND_NAV_LINKS
-      : isDumpster
-        ? DUMPSTER_NAV_LINKS
-        : DEFAULT_NAV_LINKS;
-  const logoHref = isRoofers
-    ? "/roofers"
-    : isBroadband
-      ? "/broadband"
-      : isDumpster
-        ? "/dumpster-leads"
-        : "/";
-  const ctaHref = isRoofers
-    ? "/roofers#try-it"
-    : isBroadband
-      ? "/broadband#try-it"
-      : isDumpster
-        ? "mailto:contact@permitlookup.com?subject=Dumpster%20Leads"
-        : "/hail-leads";
+  const isHail = variant === "hail";
+  const navLinks = isHail
+    ? HAIL_NAV_LINKS
+    : isRoofers
+      ? ROOFERS_NAV_LINKS
+      : isBroadband
+        ? BROADBAND_NAV_LINKS
+        : isDumpster
+          ? DUMPSTER_NAV_LINKS
+          : DEFAULT_NAV_LINKS;
+  const logoHref = isHail
+    ? "/hail-leads"
+    : isRoofers
+      ? "/roofers"
+      : isBroadband
+        ? "/broadband"
+        : isDumpster
+          ? "/dumpster-leads"
+          : "/";
+  const ctaHref = isHail
+    ? "mailto:contact@permitlookup.com?subject=Hail%20Leads%20access"
+    : isRoofers
+      ? "/roofers#try-it"
+      : isBroadband
+        ? "/broadband#try-it"
+        : isDumpster
+          ? "mailto:contact@permitlookup.com?subject=Dumpster%20Leads"
+          : "/hail-leads";
   const ctaLabel = isDumpster
     ? "Get Leads"
     : isRoofers
       ? "Try Dispatch"
       : isBroadband
         ? "Try the API"
-        : "See Demo";
+        : isHail
+          ? "Request Access"
+          : "See Demo";
 
   const t = TOKENS[variant];
   const brandWordmark = isDumpster ? (
@@ -182,6 +214,14 @@ export function SiteHeader({
     >
       <span className={`font-mono ${t.brandLeft}`}>{"//"}</span>
       <span className={t.brandRight}>broadband</span>
+    </Link>
+  ) : isHail ? (
+    <Link
+      href={logoHref}
+      className="flex items-baseline gap-1.5 text-lg font-semibold tracking-tight"
+    >
+      <span className={t.brandLeft}>Hail</span>
+      <span className={t.brandRight}>Leads</span>
     </Link>
   ) : (
     <Link
@@ -235,7 +275,7 @@ export function SiteHeader({
             "inline-flex h-10 w-10 items-center justify-center rounded-md md:hidden",
             variant === "default"
               ? "text-slate-700 hover:bg-slate-100"
-              : "text-stone-200 hover:bg-white/10",
+              : "text-slate-200 hover:bg-white/10",
           )}
           onClick={() => setOpen((v) => !v)}
         >
