@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import { SubscribeButton } from "./subscribe-button";
 
 export const metadata: Metadata = {
   title: "Broadband API Pricing · 924M FCC records",
@@ -17,7 +16,10 @@ type Tier = {
   cadence: string;
   tagline: string;
   bullets: string[];
-  cta: { label: string; kind: "free" | "subscribe" | "mailto"; href?: string };
+  // Stripe checkout is intentionally not wired yet — every tier opens a
+  // mailto so the team can field requests by hand. Once Stripe goes live,
+  // swap the Pro tier href to SubscribeButton again.
+  cta: { label: string; href: string };
   featured?: boolean;
 };
 
@@ -36,8 +38,7 @@ const tiers: Tier[] = [
     ],
     cta: {
       label: "Get free key",
-      kind: "mailto",
-      href: "mailto:contact@permitlookup.com?subject=Broadband%20Free%20key%20request&body=Company%3A%20%0AUse%20case%3A%20%0A",
+      href: "mailto:contact@permitlookup.com?subject=Broadband%20Free%20tier%20signup&body=Company%3A%20%0AUse%20case%3A%20%0A",
     },
   },
   {
@@ -53,7 +54,10 @@ const tiers: Tier[] = [
       "Cancel any time",
     ],
     featured: true,
-    cta: { label: "Subscribe", kind: "subscribe" },
+    cta: {
+      label: "Subscribe",
+      href: "mailto:contact@permitlookup.com?subject=Broadband%20Pro%20tier%20signup&body=Company%3A%20%0AExpected%20monthly%20volume%3A%20%0A",
+    },
   },
   {
     name: "Enterprise",
@@ -69,8 +73,7 @@ const tiers: Tier[] = [
     ],
     cta: {
       label: "Contact sales",
-      kind: "mailto",
-      href: "mailto:contact@permitlookup.com?subject=Broadband%20Enterprise%20plan&body=Company%3A%20%0AExpected%20monthly%20volume%3A%20%0A",
+      href: "mailto:contact@permitlookup.com?subject=Broadband%20Enterprise%20inquiry&body=Company%3A%20%0AExpected%20monthly%20volume%3A%20%0A",
     },
   },
 ];
@@ -138,24 +141,17 @@ export default function BroadbandPricingPage() {
                 ))}
               </ul>
               <div className="mt-8">
-                {tier.cta.kind === "subscribe" ? (
-                  <SubscribeButton
-                    label={tier.cta.label}
-                    featured={tier.featured}
-                  />
-                ) : (
-                  <Link
-                    href={tier.cta.href ?? "#"}
-                    className={
-                      "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition " +
-                      (tier.featured
-                        ? "bg-sky-600 text-white hover:bg-sky-500"
-                        : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50")
-                    }
-                  >
-                    {tier.cta.label} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                )}
+                <Link
+                  href={tier.cta.href}
+                  className={
+                    "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition " +
+                    (tier.featured
+                      ? "bg-sky-600 text-white hover:bg-sky-500"
+                      : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50")
+                  }
+                >
+                  {tier.cta.label} <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           ))}

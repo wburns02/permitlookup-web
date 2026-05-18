@@ -18,8 +18,10 @@ export type SiteHeaderVariant =
 const DEFAULT_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/hail-leads", label: "Hail Leads" },
-  { href: "/#pricing", label: "Pricing" },
-  { href: "/#contact", label: "Contact" },
+  // Relative anchors only — absolute "/#pricing" hits the host redirect on
+  // storms./broadband./roofers. subdomains and loses the fragment.
+  { href: "#pricing", label: "Pricing" },
+  { href: "#contact", label: "Contact" },
 ];
 
 const DUMPSTER_NAV_LINKS: NavLink[] = [
