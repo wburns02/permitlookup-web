@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "For any US address, get every ISP, technology, and speed in a single call. 924 million FCC broadband records, 116 million addresses, 2,135 providers.",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const kpis = [
   { value: "924M", label: "FCC location records" },

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Within 48 hours of a hail event, get ranked rooftop addresses ready for outreach. 15K TX hail events, 35M mortgage records, 297M code-violation distress signals. One API call.",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const kpis = [
   { value: "15K", label: "TX hail events since 2014" },

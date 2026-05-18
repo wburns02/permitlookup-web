@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "Three tiers. Free for prototyping, Pro for production, Enterprise for volume. Same 924M-record dataset on every tier.",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 type Tier = {
   name: string;

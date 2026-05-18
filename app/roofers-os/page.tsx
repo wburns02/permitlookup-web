@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "Estimates, claims, dispatch, photo docs, and a customer portal — built for Texas roofers, powered by the same data layer behind Storm Strike Dispatch.",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const heroKpis = [
   { value: "37", label: "portfolio products" },
