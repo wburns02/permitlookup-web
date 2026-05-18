@@ -37,6 +37,28 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/roofers",
+        has: [
+          {
+            type: "host",
+            value: "roofers.ecbtx.com",
+          },
+        ],
+        destination: "/roofers-os",
+        permanent: false,
+      },
+      {
+        source: "/roofers/:path*",
+        has: [
+          {
+            type: "host",
+            value: "roofers.ecbtx.com",
+          },
+        ],
+        destination: "/roofers-os",
+        permanent: false,
+      },
+      {
         source: "/",
         has: [
           {
